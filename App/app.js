@@ -1,6 +1,6 @@
 global.config = {
     zwaveDriverPath: '/dev/ttyACM0',
-    sqliteDBLocation: '/ZwaveBoiler/BoilerControl/valves.sqlite',
+    sqliteDBLocation: '/App/valves.sqlite',
     intranetAMQPURI: 'amqp://pi:pi@localhost',
     internetAMQPURI: 'amqp://ikuaqslf:B6blp8fWqyBE4Ya7NBXhhVEk1guTw-M8@impala.rmq.cloudamqp.com/ikuaqslf',
     valves: {

@@ -24,4 +24,4 @@ RUN [ "cross-build-end" ]
 
 
 
-ENTRYPOINT ["node","/App/server.js"]
+ENTRYPOINT ["node","/App/app.js"]
