@@ -2,7 +2,7 @@ var amqp = require('amqplib');
 var await = require('asyncawait/await');
 var async = require('asyncawait/async');
 exports.startMonitoring = function (heatingValvesManager) {
-    amqp.connect('amqp://pi:pi@localhost').then(function (conn) {
+    amqp.connect(process.env.TEMPQUEUEURL).then(function (conn) {
         process.once('SIGINT', function () { conn.close(); });
         return conn.createChannel().then(function (ch) {
 
