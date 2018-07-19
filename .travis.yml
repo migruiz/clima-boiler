@@ -7,7 +7,7 @@ services:
 env:
   global:
     - PI_APP=clima-boiler-rpi3
-script: bash travis.sh
+script: bash travis.sh || travis_terminate 1;
 
 notifications:
    email:
