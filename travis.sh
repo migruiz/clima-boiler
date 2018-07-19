@@ -7,6 +7,6 @@ else
 	HUBNAME=migruiz/$PI_APP:$TRAVIS_TAG;
 fi
 docker pull $HUBNAME || true;
-docker build  -f Dockerfile_www --cache-from $HUBNAME  -t $HUBNAME  .
+docker build  --cache-from $HUBNAME  -t $HUBNAME  .
 echo "$DOCKER_PASSWORD" | docker login -u "coco" --password-stdin
 docker push $HUBNAME 
