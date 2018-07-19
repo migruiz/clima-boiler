@@ -7,5 +7,5 @@ else
 fi
 docker pull $HUBNAME || true;
 docker build  -f Dockerfile_www --cache-from $HUBNAME  -t $HUBNAME  . || travis_terminate 1;
-echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin || travis_terminate 1;
+echo "$DOCKER_PASSWORD" | docker login -u "coco" --password-stdin || travis_terminate 1;
 docker push $HUBNAME  || travis_terminate 1;
