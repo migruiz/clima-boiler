@@ -1,6 +1,4 @@
 var amqp = require('amqplib');
-var await = require('asyncawait/await');
-var async = require('asyncawait/async');
 var queueListener = require('./rabbitQueueListenerConnector.js')
 
 function startMonitoring(hotWaterBoostControl) {
@@ -9,9 +7,6 @@ function startMonitoring(hotWaterBoostControl) {
         var content = msg.content.toString();
         console.log(" [x] Received '%s'", content);
         var boostConfig = JSON.parse(content);
-        var asyncFx = async(function () {
-            await(HotWaterBoostControl.startBoostAsync(boostConfig.boostTime));
-        })
-        asyncFx();
+        await HotWaterBoostControl.startBoostAsync(boostConfig.boostTime);
     });
 }

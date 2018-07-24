@@ -1,56 +1,42 @@
 ﻿var amqp = require('amqplib');
-var await = require('asyncawait/await');
-var async = require('asyncawait/async');
 var queueListener = require('./rabbitQueueListenerConnector.js')
 var sqlRepository = require('./sqliteValvesRepository');
 
-function monitorRegulateSettingQueue(amqpURI, zonesValvesManager) {
+async function monitorRegulateSettingQueue(amqpURI, zonesValvesManager) {
 
     queueListener.listenToQueue(amqpURI, 'zoneRegulateSetting', { durable: false, noAck: true }, function (ch, msg) {
         var content = msg.content.toString();
         console.log(" [x] Received '%s'", content);
         var zoneRegulateChange = JSON.parse(content);
-        var asyncFx = async(function () {
-            await(zonesValvesManager.setZoneValveAutoRegulatedEnabledAsync(zoneRegulateChange.zoneCode, zoneRegulateChange.enabled));
-            await(broadcastCurrentSettingsAsync());
-        })
-        asyncFx();
+        await zonesValvesManager.setZoneValveAutoRegulatedEnabledAsync(zoneRegulateChange.zoneCode, zoneRegulateChange.enabled);
+        await broadcastCurrentSettingsAsync();
     });
 }
 
-function monitorTargetTemperatureQueue(amqpURI, zonesValvesManager) {
+async function monitorTargetTemperatureQueue(amqpURI, zonesValvesManager) {
     queueListener.listenToQueue(amqpURI, 'zoneMinimumTemperatureSetting', { durable: false, noAck: true }, function (ch, msg) {
         var content = msg.content.toString();
         console.log(" [x] Received '%s'", content);
         var zoneTargetTemperatureChange = JSON.parse(content);
-        var asyncFx = async(function () {
-            await(zonesValvesManager.setZoneTargetTemperatureAsync(zoneTargetTemperatureChange.zoneCode, zoneTargetTemperatureChange.zoneMinimumTemperature.toFixed(1)));
-            await(broadcastCurrentSettingsAsync());
-        })
-        asyncFx();
+        await zonesValvesManager.setZoneTargetTemperatureAsync(zoneTargetTemperatureChange.zoneCode, zoneTargetTemperatureChange.zoneMinimumTemperature.toFixed(1));
+        await broadcastCurrentSettingsAsync();
     });
 }
-function monitorGetZonesConfig(amqpURI) {
+async function monitorGetZonesConfig(amqpURI) {
 
     queueListener.listenToQueue(amqpURI, 'getZoneSetting', { durable: false, noAck: true }, function (ch, msg) {
-        var asyncFx = async(function () {
-            await(broadcastCurrentSettingsAsync());
-        })
-        asyncFx();
+        await broadcastCurrentSettingsAsync();
     });
 }
 
-function monitorZoneCommand(amqpURI) {
+async function monitorZoneCommand(amqpURI) {
 
     queueListener.listenToQueue(amqpURI, 'zoneCommand', { durable: false, noAck: true }, function (ch, msg) {
         var content = msg.content.toString();
         console.log(" [x] Received '%s'", content);
         var zoneCommand = JSON.parse(content);
-        var asyncFx = async(function () {
-            await(zonesValvesManager.processZoneCommandAsync(zoneCommand));
-            await(broadcastCurrentSettingsAsync());
-        })
-        asyncFx();
+        await zonesValvesManager.processZoneCommandAsync(zoneCommand);
+        await broadcastCurrentSettingsAsync();
     });
 }
 
@@ -93,8 +79,8 @@ function broacastToChannel(uri, ZoneValvesSettings) {
 
 
 
-function broadcastCurrentSettingsAsync() {
-    var zoneValveSettings = await(sqlRepository.getZonesValvesConfig());
+async function broadcastCurrentSettingsAsync() {
+    var zoneValveSettings = await sqlRepository.getZonesValvesConfig();
     var jsonObject = { list: zoneValveSettings };
     var internetAMQPURI = global.config.internetAMQPURI;
     var intranetAMQPURI = global.config.intranetAMQPURI;
