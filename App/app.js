@@ -27,7 +27,10 @@ var firebaseSyncReceiver = require('./firebaseSyncReceiver.js');
 
 
 
-var zwave = new ZWave({ ConsoleOutput: false });
+//var zwave = new ZWave({ ConsoleOutput: false });
+
+
+
 zwave.on('scan complete', function () {
     var individualValveManager = individualValvesManagerCreator.getInstance(zwave);
 

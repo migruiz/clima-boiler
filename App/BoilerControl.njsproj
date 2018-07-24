@@ -54,6 +54,7 @@
     <Compile Include="zonesValvesConfigurationReceiver.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ZWaveMock.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
     <Content Include="zonesDatabase.js" />
