@@ -1,5 +1,3 @@
-var await = require('asyncawait/await');
-var async = require('asyncawait/async');
 var valvesCreator = require('./valve.js');
 
 function HeatingValvesManager(valvesZConfig,zwave) {
@@ -7,9 +5,9 @@ function HeatingValvesManager(valvesZConfig,zwave) {
         upstairsValve: valvesCreator.newInstance({ zwave: zwave, nodeId: valvesZConfig.upstairsValve.nodeId, instanceId: valvesZConfig.upstairsValve.instanceId, code: valvesZConfig.upstairsValve.code }),
         downstairsValve: valvesCreator.newInstance({ zwave: zwave, nodeId: valvesZConfig.downstairsValve.nodeId, instanceId: valvesZConfig.downstairsValve.instanceId, code: valvesZConfig.downstairsValve.code })
     };
-    this.setValvesStateAsync = function (valvesState) {
-        await(this.valves.upstairsValve.setStateAsync(valvesState.upstairsValveMode));
-        await(this.valves.downstairsValve.setStateAsync(valvesState.downstairsValveMode));
+    this.setValvesStateAsync =async function (valvesState) {
+        await this.valves.upstairsValve.setStateAsync(valvesState.upstairsValveMode);
+        await this.valves.downstairsValve.setStateAsync(valvesState.downstairsValveMode);
     };
 }
 
