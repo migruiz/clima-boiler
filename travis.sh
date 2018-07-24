@@ -2,11 +2,16 @@
 set -ev
 HUBNAME=""
 if [[ -z "$TRAVIS_TAG" ]]; then
-   HUBNAME=migruiz/$PI_APP;
+	if [ "$TRAVIS_BRANCH" = "master" ]; then
+		HUBNAME=migruiz/$PI_APP;
+	else
+		HUBNAME=migruiz/$PI_APP:$TRAVIS_BRANCH
+	fi
+   
 else
 	HUBNAME=migruiz/$PI_APP:$TRAVIS_TAG;
 fi
-docker pull $HUBNAME || true;
-docker build  --cache-from $HUBNAME  -t $HUBNAME  .
+docker pull $HUBNAME || true
+docker build  --cache-from $HUBNAME  -t $HUBNAME  . 
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin 
-docker push $HUBNAME 
+docker push $HUBNAME  
