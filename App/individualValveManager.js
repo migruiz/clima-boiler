@@ -1,5 +1,4 @@
-var await = require('asyncawait/await');
-var async = require('asyncawait/async');
+
 var valvesCreator = require('./valve.js');
 
 function IndividualValveManager(zwave) {
@@ -11,13 +10,13 @@ function IndividualValveManager(zwave) {
         hotWaterValve: valvesCreator.newInstance({ zwave: zwave, nodeId: valvesZConfig.hotWaterValve.nodeId, instanceId: valvesZConfig.hotWaterValve.instanceId, code: valvesZConfig.hotWaterValve.code })
 
     };
-    this.setValveStateAsync = function (valveState) {
+    this.setValveStateAsync =async function (valveState) {
         var targetValve = this.valves[valveState.code];
-        await(targetValve.setStateAsync(valveState.mode));
+        await targetValve.setStateAsync(valveState.mode);
     };
     this.handleValveStateChange = function (valveReading) {
         for (var valveKey in this.valves) {
-            this.valves[valveKey].handleValveStateChange(valveReading);
+            this.valves[valveKey].handleValveStateChangeAsync(valveReading);
         }
     }
     this.requestValvesState = function () {

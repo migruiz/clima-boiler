@@ -1,6 +1,3 @@
-var await = require('asyncawait/await');
-var async = require('asyncawait/async');
-var locks = require('locks');
 var amqp = require('amqplib');
 var sqlRepository = require('./sqliteValvesRepository');
 var valvesStateReporter = require('./ValvesStateReporter');
@@ -8,46 +5,27 @@ function Valve(valveConfig) {
     var zwaveOnOffCommandId = 37;
     var zwave = valveConfig.zwave;
     this.config = valveConfig;
-    var setValveStatemutex = locks.createMutex();
-    var valveStateListenerMutex = locks.createMutex();
-    this.handleValveStateChange = function (valveReading) {
+    this.handleValveStateChangeAsync = async function (valveReading) {
         if (this.config.nodeId == valveReading.nodeId && this.config.instanceId == valveReading.instanceId && zwaveOnOffCommandId == valveReading.commandType) {
             var valveChange = { code: this.config.code, value: valveReading.value, timestamp: valveReading.timestamp };
-            var asyncFx = async(function () {
-                await(onMyValveStateChangedAsync(valveChange));
-            });
-            asyncFx();
+
+            await handleMyValvesStateChangeAsync(valveChange);
+
 
         }
     }
-    function onMyValveStateChangedAsync(valveChange) {
-        return new Promise(function (resolve, reject) {
 
-            valveStateListenerMutex.lock(function () {
-                try {
-                    await(handleMyValvesStateChangeAsync(valveChange));
-                    resolve();
-                }
-                catch (err) {
-                    return reject(err);
-                }
-                finally {
-                    valveStateListenerMutex.unlock();
-                }
-            });
-        });
-    }
-    function handleMyValvesStateChangeAsync(valveChange) {
+    async function handleMyValvesStateChangeAsync(valveChange) {
         valvesStateReporter.broadcastChange(valveChange);
-        var storedValveData = await(sqlRepository.getValveStateAsync(valveChange.code));
+        var storedValveData = await sqlRepository.getValveStateAsync(valveChange.code);
         if (!storedValveData) {
-            await(updateDatabaseAsync(valveChange.timestamp, null, valveChange.value));
+            await updateDatabaseAsync(valveChange.timestamp, null, valveChange.value);
         }
         else {
             if (storedValveData.stateTimestamp < valveChange.timestamp) {
                 if (storedValveData.state != valveChange.value) {
                     var lastOnTimeStamp = valveChange.value ? valveChange.timeStamp : storedValveData.stateOnLastTimestamp;                    
-                    await(updateDatabaseAsync(valveChange.timestamp, lastOnTimeStamp, valveChange.value));
+                    await updateDatabaseAsync(valveChange.timestamp, lastOnTimeStamp, valveChange.value);
                     sendChangeToFirebasSync(global.config.intranetAMQPURI, valveChange);
                 }
             }
@@ -69,29 +47,8 @@ function Valve(valveConfig) {
         }
         return true;
     }
-    this.setStateAsync = function (state) {
-        //if (!validateSetStateRequest(state))
-        //    return;
-        return new Promise(function (resolve, reject) {
-
-            setValveStatemutex.lock(function () {
-                try {
-                    await(setStateImplementationAsync(state));
-                    resolve();
-                }
-                catch (err) {
-                    return reject(err);
-                }
-                finally {
-                    setValveStatemutex.unlock();
-                }
-            });
-        });
-
-    }
-
-    function setStateImplementationAsync(state) {
-        var storedValveData = await(sqlRepository.getValveStateAsync(valveConfig.code));
+    this.setStateAsync = async function (state) {
+        var storedValveData = await sqlRepository.getValveStateAsync(valveConfig.code);
         if (!storedValveData) {
             zwave.setValue(valveConfig.nodeId, zwaveOnOffCommandId, valveConfig.instanceId, 0, state);
         }
@@ -101,7 +58,7 @@ function Valve(valveConfig) {
             }
             var currentTimeStamp = Math.floor(new Date() / 1000);
             var deltaSecs = currentTimeStamp - storedValveData.stateTimestamp;
-            if (deltaSecs > 20) {
+            if (deltaSecs > 5) {
                 zwave.setValue(valveConfig.nodeId, zwaveOnOffCommandId, valveConfig.instanceId, 0, state);
             }
             else {
@@ -114,7 +71,7 @@ function Valve(valveConfig) {
 
 
 
-    function updateDatabaseAsync(timeStamp, stateOnLastTimestamp, state) {
+    async function  updateDatabaseAsync(timeStamp, stateOnLastTimestamp, state) {
         var lastOnTimeStamp = state ? timeStamp : stateOnLastTimestamp;
         var dbInfo = {
             valveCode: valveConfig.code,
@@ -123,7 +80,7 @@ function Valve(valveConfig) {
             stateOnLastTimestamp: lastOnTimeStamp,
             triggeredBy: 'control'
         };
-        await(sqlRepository.updateValveStateAsync(dbInfo));
+        await sqlRepository.updateValveStateAsync(dbInfo);
         console.log("db.updated");
         console.log(dbInfo);
     }
@@ -149,7 +106,3 @@ exports.newInstance = function (valveConfig) {
     var valve = new Valve(valveConfig);
     return valve;
 }
-exports.getValveDataAsync = function (valveCode) {
-    var data = await(sqlRepository.getValveStateAsync(valveCode));
-    return data;
-};
