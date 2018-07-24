@@ -56,6 +56,7 @@
     </Compile>
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="zonesDatabase.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ZonesManager\" />
