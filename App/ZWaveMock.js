@@ -15,7 +15,7 @@ function ZWaveMock(){
     
     this.setValue = function (nodeId, commandId, instanceId, subId, state) {
         valves[nodeId][instanceId] = state;
-        valueChangedHandler(nodeId, 37, state);
+        broacastState(nodeId);
     }
     var valueChangedHandler;
     this.on = function (command, action) {
