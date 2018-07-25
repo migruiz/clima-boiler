@@ -1,6 +1,6 @@
 global.config = {
     zwaveDriverPath: '/dev/ttyACM0',
-    dbPath: '/App/valves.sqlite',
+    dbPath: 'c:\\valves.sqlite',
     intranetAMQPURI: process.env.TEMPQUEUEURL,
     internetAMQPURI: 'amqp://ikuaqslf:B6blp8fWqyBE4Ya7NBXhhVEk1guTw-M8@impala.rmq.cloudamqp.com/ikuaqslf',
     valves: {

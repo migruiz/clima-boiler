@@ -12,6 +12,7 @@ function SendChangetoFirebaseAsync(valveReading) {
 
 
 exports.startMonitoring = function () {
+    return;
     var intranetAMQPURI = global.config.intranetAMQPURI;
     queueListener.listenToQueue(intranetAMQPURI, 'firebaseSyncQueue', { durable: true, noAck: false }, async function (ch, msg) {
         console.log("firebase");

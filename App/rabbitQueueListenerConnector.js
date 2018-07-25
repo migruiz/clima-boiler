@@ -19,6 +19,17 @@ async function listenToQueue(serverURI, queuename, config, onMessageReceived) {
 
     try {
         var connection = await amqp.connect(serverURI);
+        monitorConnection(connection);
+        var channel = await connection.createChannel();
+        await channel.assertQueue(queuename, { durable: config.durable });
+        channel.consume(queuename, function (msg) {
+            try {
+                onMessageReceived(channel, msg);
+            } catch (err) {
+                console.log("err consuming message" + serverURI + queuename);
+                console.log(msg);
+            }
+        }, { noAck: config.noAck });
     }
     catch (connerr) {
         console.log("error connecting queue" + serverURI + queuename);
@@ -28,17 +39,7 @@ async function listenToQueue(serverURI, queuename, config, onMessageReceived) {
         }, 1000);
         return;
     }
-    monitorConnection(connection);
-    var channel = await connection.createChannel();
-    await channel.assertQueue(queuename, { durable: config.durable });
-    channel.consume(queuename, function (msg) {
-        try {
-            onMessageReceived(channel, msg);
-        } catch (err) {
-            console.log("err consuming message" + serverURI + queuename);
-            console.log(msg);
-        }
-    }, { noAck: config.noAck });
+
 
 
 

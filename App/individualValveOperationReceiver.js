@@ -15,5 +15,5 @@ exports.startMonitoring = function (individualValveManager) {
     var internetAMQPURI = global.config.internetAMQPURI;
     var intranetAMQPURI = global.config.intranetAMQPURI;
     monitorQueue(internetAMQPURI, individualValveManager);
-    monitorQueue(intranetAMQPURI, individualValveManager);
+   // monitorQueue(intranetAMQPURI, individualValveManager);
 }

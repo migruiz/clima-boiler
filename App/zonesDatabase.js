@@ -28,7 +28,7 @@ var singleton;
 exports.instance = function () {
 
 	if (!singleton) {
-		singleton = new sqlite.SQLDB(global.dbPath, versionHistory);
+		singleton = new sqlite.SQLDB(global.config.dbPath, versionHistory);
 	}
 
 	return singleton;

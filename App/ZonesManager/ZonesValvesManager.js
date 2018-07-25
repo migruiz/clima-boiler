@@ -74,6 +74,7 @@ function ZonesValvesManager(individualValveManager) {
     }
 
     this.startMonitoring = function () {
+        return;
         queueListener.listenToQueue(global.config.intranetAMQPURI, 'zoneReadingUpdate', { durable: false, noAck: true }, async function (ch, msg) {
             var content = msg.content.toString();
             var zoneReadingRequest = JSON.parse(content);

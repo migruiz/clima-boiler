@@ -46,10 +46,10 @@ exports.startMonitoring = function (zonesValvesManager) {
     var internetAMQPURI = global.config.internetAMQPURI;
     var intranetAMQPURI = global.config.intranetAMQPURI;
     monitorRegulateSettingQueue(internetAMQPURI, zonesValvesManager);
-    monitorRegulateSettingQueue(intranetAMQPURI, zonesValvesManager);
-    monitorTargetTemperatureQueue(intranetAMQPURI, zonesValvesManager);
+    //monitorRegulateSettingQueue(intranetAMQPURI, zonesValvesManager);
+    //monitorTargetTemperatureQueue(intranetAMQPURI, zonesValvesManager);
     monitorTargetTemperatureQueue(internetAMQPURI, zonesValvesManager);
-    monitorGetZonesConfig(intranetAMQPURI, zonesValvesManager);
+    //monitorGetZonesConfig(intranetAMQPURI, zonesValvesManager);
     monitorGetZonesConfig(internetAMQPURI, zonesValvesManager);
 }
 
