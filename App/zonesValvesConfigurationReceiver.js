@@ -85,5 +85,5 @@ async function broadcastCurrentSettingsAsync() {
     var internetAMQPURI = global.config.internetAMQPURI;
     var intranetAMQPURI = global.config.intranetAMQPURI;
     broacastToChannel(internetAMQPURI, jsonObject);
-    broacastToChannel(intranetAMQPURI, jsonObject);
+   // broacastToChannel(intranetAMQPURI, jsonObject);
 }

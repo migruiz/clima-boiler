@@ -70,7 +70,7 @@ function SQLDB(path, structure) {
 
 }
 
-function Fac(path, structure){
+function SQLDBWrapper(path, structure){
     var sqlDB
     var queue = new PromiseQueue();  
     this.operate=async function(operation){
@@ -89,5 +89,5 @@ function Fac(path, structure){
 
 
 
-exports.SQLDB = Fac;
+exports.SQLDB = SQLDBWrapper;
 
