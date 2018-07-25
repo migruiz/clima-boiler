@@ -3,7 +3,7 @@ var amqp = require('amqplib');
 function broacastToChannel(uri,valveReading) {
     amqp.connect(uri).then(function (conn) {
         return conn.createChannel().then(function (ch) {
-            var ex = 'valveReadingChange';
+            var ex = 'valveReadingChangeMock';
             var msg = JSON.stringify(valveReading);
 
             var ok = ch.assertExchange(ex, 'fanout', { durable: false });
@@ -27,7 +27,7 @@ function broadcastChange(valveReading) {
     var internetAMQPURI = global.config.internetAMQPURI;
     var intranetAMQPURI = global.config.intranetAMQPURI;
     broacastToChannel(internetAMQPURI, valveReading);
-    broacastToChannel(intranetAMQPURI, valveReading);    
+   // broacastToChannel(intranetAMQPURI, valveReading);    
 }
 exports.broadcastChange = broadcastChange;
 
