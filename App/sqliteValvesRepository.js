@@ -15,10 +15,10 @@ exports.getZonesValvesConfig = async function () {
 };
 exports.getValveStateAsync = async function (valveCode) {
 
-    var result = await zonesdb.instance().getAsync("select valveCode valveCode,state state, stateTimestamp stateTimestamp,stateOnLastTimestamp stateOnLastTimestamp,triggeredBy triggeredBy from Valves where valveCode=$valveCode",
+    var result = await zonesdb.instance().operate(db=>db.getAsync("select valveCode valveCode,state state, stateTimestamp stateTimestamp,stateOnLastTimestamp stateOnLastTimestamp,triggeredBy triggeredBy from Valves where valveCode=$valveCode",
         {
             $valveCode: valveCode
-        });
+        }));
     return result;
 
 }

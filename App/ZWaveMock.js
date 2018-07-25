@@ -1,26 +1,20 @@
 function ZWaveMock(){
     this.requestNodeState = function (nodeId) {
-
-        
-        var node = valves[nodeId];
-        for (var instance in node) {
-            var state = node[instance];
-            valueChangedHandler(nodeId, 37, new { value: state, instance: instance, class_id: 37 });
-        }
+        broacastState(nodeId);
     }
     var valves = {
         4: {
-            1: 0,  //testValve
-            3: 0 //hotwater
+            1: false,  //testValve
+            3: false //hotwater
         },
         5: {
-            1: 0,  //upstaisvalve
-            3: 0  //downstairsvalve
+            1: false,  //upstaisvalve
+            3: false  //downstairsvalve
         },
     };
     
     this.setValue = function (nodeId, commandId, instanceId, subId, state) {
-        val[nodeId][instanceId] = state;
+        valves[nodeId][instanceId] = state;
         valueChangedHandler(nodeId, 37, state);
     }
     var valueChangedHandler;
@@ -38,6 +32,14 @@ function ZWaveMock(){
     }
     this.connect = function () {
         console.log("mock connect");
+    }
+
+    function broacastState(nodeId) {
+        var node = valves[nodeId];
+        for (var instance in node) {
+            var state = node[instance];
+            valueChangedHandler(nodeId, 37, { value: state, instance: instance, class_id: 37 });
+        }
     }
 }
 

@@ -17,8 +17,8 @@ function ZonesValvesManager(individualValveManager) {
     };
 
     async function onZoneChangedAsync() {
-        var upstairsValveOn = valveNeedsToBeOnAsync(valvesZones.upstairs);
-        var downstairsValveOn = valveNeedsToBeOnAsync(valvesZones.downstairs);
+        var upstairsValveOn =await valveNeedsToBeOnAsync(valvesZones.upstairs);
+        var downstairsValveOn =await valveNeedsToBeOnAsync(valvesZones.downstairs);
 
         var upstairsValveNewState = { code: "upstairsValve", mode: upstairsValveOn };
         await individualValveManager.setValveStateAsync(upstairsValveNewState);
