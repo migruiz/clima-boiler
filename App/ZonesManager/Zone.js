@@ -170,7 +170,7 @@ function BoostZoneControl(zoneCode, boostInfo) {
     }
 }
 
-function Zone(zoneCode, onZoneChangedAsync) {
+async function Zone(zoneCode, onZoneChangedAsync) {
     var lastReading;
     var deadZoneControl = new DeadZoneSensorControl();
     var smartBoostZoneControl = new SmartBoostZoneControl();
@@ -197,13 +197,13 @@ function Zone(zoneCode, onZoneChangedAsync) {
         smartBoostZoneControl.onNewZoneReading(zoneReading.temperature);
         await onZoneChangedAsync();
     }
-    this.setZoneTargetTemperatureAsync = function (temperature) {
+    this.setZoneTargetTemperatureAsync =async function (temperature) {
         await(sqlRepository.setZoneValveinimumTemperature(zoneCode, temperature));
         zoneRegulatinSetting = await(sqlRepository.getZoneValveConfigByZoneCodeAsync(zoneCode));
         smartBoostZoneControl.setTargetTemperature(zoneRegulatinSetting.zoneMinimumTemperature);
         await onZoneChangedAsync();
     }
-    this.setZoneValveAutoRegulatedEnabledAsync = function (enabled) {
+    this.setZoneValveAutoRegulatedEnabledAsync =async function (enabled) {
         await(sqlRepository.setZoneValveAutoRegulatedEnabled(zoneCode, enabled));
         zoneRegulatinSetting = await(sqlRepository.getZoneValveConfigByZoneCodeAsync(zoneCode));
         smartBoostZoneControl.setTargetTemperature(zoneRegulatinSetting.zoneMinimumTemperature);

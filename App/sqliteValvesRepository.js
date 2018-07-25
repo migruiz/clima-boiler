@@ -13,7 +13,7 @@ exports.getZonesValvesConfig = async function () {
     var result = await zonesdb.instance().db.allAsync("select zoneCode,IFNULL(zoneAutoRegulateEnabled,0) zoneAutoRegulateEnabled ,IFNULL(zoneMinimumTemperature,0) zoneMinimumTemperature from ZoneValvesSettings");
     return result;
 };
-exports.getValveStateAsync = function (valveCode) {
+exports.getValveStateAsync = async function (valveCode) {
 
     var result = await zonesdb.instance().db.getAsync("select valveCode valveCode,state state, stateTimestamp stateTimestamp,stateOnLastTimestamp stateOnLastTimestamp,triggeredBy triggeredBy from Valves where valveCode=$valveCode",
         {
@@ -47,7 +47,7 @@ exports.setZoneValveAutoRegulatedEnabled = async  function (zoneCode, enabled) {
 
 }
 exports.setZoneValveinimumTemperature = async  function (zoneCode, zoneMinimumTemperature) {
-    await zonesdb.instance()..runAsync("replace into ZoneValvesSettings(zoneCode,zoneAutoRegulateEnabled,zoneMinimumTemperature) values ($zoneCode,(select zoneAutoRegulateEnabled from ZoneValvesSettings where zoneCode=$zoneCode),$zoneMinimumTemperature)",
+    await zonesdb.instance().runAsync("replace into ZoneValvesSettings(zoneCode,zoneAutoRegulateEnabled,zoneMinimumTemperature) values ($zoneCode,(select zoneAutoRegulateEnabled from ZoneValvesSettings where zoneCode=$zoneCode),$zoneMinimumTemperature)",
         {
             $zoneCode: zoneCode,
             $zoneMinimumTemperature: zoneMinimumTemperature

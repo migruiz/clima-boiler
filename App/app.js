@@ -12,11 +12,9 @@ global.config = {
 };
 
 
-var test = require('./ZWaveMock.js');
-var instance = new test.ZWaveMock();
-return;
+var ZWaveMockMan = require('./ZWaveMock.js');
 
-var ZWave = require('./node_modules/openzwave-shared/lib/openzwave-shared.js');
+//var ZWave = require('./node_modules/openzwave-shared/lib/openzwave-shared.js');
 var os = require('os');
 var individualValvesManagerCreator = require('./individualValveManager.js');
 var zonesValvesManagerCreator = require('./ZonesManager/ZonesValvesManager.js');
@@ -33,7 +31,7 @@ var firebaseSyncReceiver = require('./firebaseSyncReceiver.js');
 
 
 //var zwave = new ZWave({ ConsoleOutput: false });
-
+var zwave = new test.ZWaveMock();
 
 
 zwave.on('scan complete', function () {

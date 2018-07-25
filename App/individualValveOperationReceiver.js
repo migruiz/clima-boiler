@@ -3,7 +3,7 @@ var queueListener = require('./rabbitQueueListenerConnector.js')
 
 function monitorQueue(amqpURI, individualValveManager) {
 
-    queueListener.listenToQueue(amqpURI, 'individualValve', { durable: false, noAck: true }, function (ch, msg) {
+    queueListener.listenToQueue(amqpURI, 'individualValve', { durable: false, noAck: true },async function (ch, msg) {
         var content = msg.content.toString();
         console.log(" [x] Received '%s'", content);
         var valveState = JSON.parse(content);

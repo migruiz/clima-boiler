@@ -4,7 +4,7 @@ var sqlRepository = require('./sqliteValvesRepository');
 
 async function monitorRegulateSettingQueue(amqpURI, zonesValvesManager) {
 
-    queueListener.listenToQueue(amqpURI, 'zoneRegulateSetting', { durable: false, noAck: true }, function (ch, msg) {
+    queueListener.listenToQueue(amqpURI, 'zoneRegulateSetting', { durable: false, noAck: true },async function (ch, msg) {
         var content = msg.content.toString();
         console.log(" [x] Received '%s'", content);
         var zoneRegulateChange = JSON.parse(content);
@@ -14,7 +14,7 @@ async function monitorRegulateSettingQueue(amqpURI, zonesValvesManager) {
 }
 
 async function monitorTargetTemperatureQueue(amqpURI, zonesValvesManager) {
-    queueListener.listenToQueue(amqpURI, 'zoneMinimumTemperatureSetting', { durable: false, noAck: true }, function (ch, msg) {
+    queueListener.listenToQueue(amqpURI, 'zoneMinimumTemperatureSetting', { durable: false, noAck: true }, async function (ch, msg) {
         var content = msg.content.toString();
         console.log(" [x] Received '%s'", content);
         var zoneTargetTemperatureChange = JSON.parse(content);
@@ -24,14 +24,14 @@ async function monitorTargetTemperatureQueue(amqpURI, zonesValvesManager) {
 }
 async function monitorGetZonesConfig(amqpURI) {
 
-    queueListener.listenToQueue(amqpURI, 'getZoneSetting', { durable: false, noAck: true }, function (ch, msg) {
+    queueListener.listenToQueue(amqpURI, 'getZoneSetting', { durable: false, noAck: true }, async function (ch, msg) {
         await broadcastCurrentSettingsAsync();
     });
 }
 
 async function monitorZoneCommand(amqpURI) {
 
-    queueListener.listenToQueue(amqpURI, 'zoneCommand', { durable: false, noAck: true }, function (ch, msg) {
+    queueListener.listenToQueue(amqpURI, 'zoneCommand', { durable: false, noAck: true },async function (ch, msg) {
         var content = msg.content.toString();
         console.log(" [x] Received '%s'", content);
         var zoneCommand = JSON.parse(content);
