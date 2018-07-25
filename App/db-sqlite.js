@@ -33,10 +33,11 @@ function SQLDB(path, structure) {
         return db;
     }
 
-    var db = createInstance();
-    createStructureAsync();
+    var db;
+    this.initAsync=initAsync;
 
-    async function createStructureAsync() {
+    async function initAsync() {
+        db=createInstance();
         var data = await getAsync("PRAGMA USER_VERSION");
         var currentVersionNo = data.USER_VERSION;
         var newVersionNo = structure.length;
