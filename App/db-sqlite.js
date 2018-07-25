@@ -1,4 +1,6 @@
+var PromiseQueue = require('a-promise-queue');
 function SQLDB(path, structure) {
+
     function getAsync(sql, params) {
         return new Promise(function (resolve, reject) {
             db.get(sql, params, function (err, data) {
@@ -68,11 +70,24 @@ function SQLDB(path, structure) {
 
 }
 
+function Fac(path, structure){
+    var sqlDB
+    var queue = new PromiseQueue();  
+    this.operate=async function(operation){
+        return await queue.add(async function() {
+            if (!sqlDB){
+                sqlDB=new SQLDB(path,structure);
+                await sqlDB.initAsync();
+            }
+            return await operation(sqlDB);
+        });
+    }
+}
 
 
 
 
 
 
-exports.SQLDB = SQLDB;
+exports.SQLDB = Fac;
 

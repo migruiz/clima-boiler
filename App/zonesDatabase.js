@@ -24,16 +24,9 @@ versionHistory.push('alter table ZoneValvesSettings add boostEnabled int');
 
 
 var singleton;
-var PromiseQueue = require('a-promise-queue');
-var queue = new PromiseQueue();
-exports.instance =async  function () {
-
-
-        return await queue.add(async function() {
-                if (!singleton) {
-                        singleton = new sqlite.SQLDB(global.config.dbPath, versionHistory);
-                        await singleton.initAsync();
-                }
-                return singleton;
-            });
+exports.instance = function () {
+        if (!singleton) {
+                singleton = new sqlite.SQLDB(global.config.dbPath, versionHistory);
+        }
+        return singleton;
 }
