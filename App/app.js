@@ -1,6 +1,6 @@
 global.config = {
     zwaveDriverPath: '/dev/ttyACM0',
-    sqliteDBLocation: '/App/valves.sqlite',
+    dbPath: '/App/valves.sqlite',
     intranetAMQPURI: process.env.TEMPQUEUEURL,
     internetAMQPURI: 'amqp://ikuaqslf:B6blp8fWqyBE4Ya7NBXhhVEk1guTw-M8@impala.rmq.cloudamqp.com/ikuaqslf',
     valves: {
@@ -31,7 +31,7 @@ var firebaseSyncReceiver = require('./firebaseSyncReceiver.js');
 
 
 //var zwave = new ZWave({ ConsoleOutput: false });
-var zwave = new test.ZWaveMock();
+var zwave = new ZWaveMockMan.ZWaveMock();
 
 
 zwave.on('scan complete', function () {

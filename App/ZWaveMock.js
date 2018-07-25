@@ -24,13 +24,20 @@ function ZWaveMock(){
         valueChangedHandler(nodeId, 37, state);
     }
     var valueChangedHandler;
-    this.on= function (command, action) {
-        if (command.localeCompare('scan complete')) {
+    this.on = function (command, action) {
+        console.log("mock on " + command);
+        if (command.localeCompare('scan complete')==0) {
             action();
         }
-        else if (command.localeCompare('value changed')) {
+        else if (command.localeCompare('value changed')==0) {
             valueChangedHandler = action;
         }
+    }
+    this.disconnect = function () {
+        console.log("mock disconnecting");
+    }
+    this.connect = function () {
+        console.log("mock connect");
     }
 }
 

@@ -170,24 +170,25 @@ function BoostZoneControl(zoneCode, boostInfo) {
     }
 }
 
-async function Zone(zoneCode, onZoneChangedAsync) {
+function Zone(zoneCode, onZoneChangedAsync) {
     var lastReading;
     var deadZoneControl = new DeadZoneSensorControl();
     var smartBoostZoneControl = new SmartBoostZoneControl();
     var boostZoneControl;
     var zoneRegulatinSetting;
 
-    var zoneConfig = await sqlRepository.getZoneValveConfigByZoneCodeAsync(zoneCode);
-    smartBoostZoneControl.setTargetTemperature(zoneConfig.zoneMinimumTemperature);
-    zoneRegulatinSetting = zoneConfig;
-    var boostInfo = {
-        boostTime: zoneConfig.boostTime,
-        boostStartTime: zoneConfig.boostStartTime,
-        boostEnabled: zoneConfig.boostEnabled
-    };
-    boostZoneControl = new BoostZoneControl(zoneCode, boostInfo);
-    this.startBoost = boostZoneControl.startBoost;
-    this.stopBoost = BoostZoneControl.stopBoost;
+    (async function () {
+        var zoneConfig = await sqlRepository.getZoneValveConfigByZoneCodeAsync(zoneCode);
+        smartBoostZoneControl.setTargetTemperature(zoneConfig.zoneMinimumTemperature);
+        zoneRegulatinSetting = zoneConfig;
+        var boostInfo = {
+            boostTime: zoneConfig.boostTime,
+            boostStartTime: zoneConfig.boostStartTime,
+            boostEnabled: zoneConfig.boostEnabled
+        };
+        boostZoneControl = new BoostZoneControl(zoneCode, boostInfo);
+    })();
+
 
 
 
