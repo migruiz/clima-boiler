@@ -11,6 +11,11 @@ global.config = {
     }
 };
 
+
+var test = require('./ZWaveMock.js');
+var instance = new test.ZWaveMock();
+return;
+
 var ZWave = require('./node_modules/openzwave-shared/lib/openzwave-shared.js');
 var os = require('os');
 var individualValvesManagerCreator = require('./individualValveManager.js');

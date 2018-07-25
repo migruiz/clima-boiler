@@ -33,3 +33,6 @@ function ZWaveMock(){
         }
     }
 }
+
+
+exports.ZWaveMock = ZWaveMock;
