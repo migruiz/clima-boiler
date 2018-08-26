@@ -14,8 +14,8 @@ function ZonesValvesManager(individualValveManager) {
         entrance: zonesCreator.newInstance('entrance',onZoneChangedAsync)
     }
     var valvesZones = {
-        upstairs: [zones.masterroom, zones.computerroom, zones.masterbathroom, zones.secondbedroom],
-        downstairs: [zones.livingroom, zones.entrance]
+        upstairs: [zones.masterroom, zones.computerroom, zones.masterbathroom, zones.secondbedroom, zones.entrance],
+        downstairs: [zones.livingroom]
     };
 
     function onZoneChangedAsync() {
