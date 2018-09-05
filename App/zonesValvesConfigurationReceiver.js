@@ -19,6 +19,7 @@ function monitorRegulateSettingQueue(amqpURI, zonesValvesManager) {
 }
 
 function monitorTargetTemperatureQueue(amqpURI, zonesValvesManager) {
+    console.log("entro");
     queueListener.listenToQueue(amqpURI, 'zoneMinimumTemperatureSetting', { durable: false, noAck: true }, function (ch, msg) {
         var content = msg.content.toString();
         console.log(" [x] Received '%s'", content);
@@ -40,19 +41,7 @@ function monitorGetZonesConfig(amqpURI) {
     });
 }
 
-function monitorZoneCommand(amqpURI) {
 
-    queueListener.listenToQueue(amqpURI, 'zoneCommand', { durable: false, noAck: true }, function (ch, msg) {
-        var content = msg.content.toString();
-        console.log(" [x] Received '%s'", content);
-        var zoneCommand = JSON.parse(content);
-        var asyncFx = async(function () {
-            await(zonesValvesManager.processZoneCommandAsync(zoneCommand));
-            await(broadcastCurrentSettingsAsync());
-        })
-        asyncFx();
-    });
-}
 
 
 

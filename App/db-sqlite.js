@@ -62,10 +62,6 @@ var singleton = (function () {
         );`);
     versionHistory.push('CREATE UNIQUE INDEX IX_zoneCode ON ZoneValvesSettings (zoneCode ASC);');
 
-    versionHistory.push('alter table ZoneValvesSettings add boostTime int');
-    versionHistory.push('alter table ZoneValvesSettings add boostStartTime int');
-    versionHistory.push('alter table ZoneValvesSettings add boostEnabled int');
-
     
     function applyDatabaseConfigurationChanges(db, currentVersion, versions) {
         for (var i = currentVersion; i < versions.length; i++) {

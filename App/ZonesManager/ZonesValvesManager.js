@@ -41,26 +41,6 @@ function ZonesValvesManager(individualValveManager) {
         var zone = zones[zoneCode];
         await(zone.setZoneValveAutoRegulatedEnabledAsync(enabled));
     }
-
-
-    this.processZoneCommandAsync = function (command) {
-        var zone = zones[command.zoneCode];
-        if (command.type == "boostZone") {
-            if (command.boostEnabled) {
-                zone.startBoost(command.boostTime);
-            }
-            else {
-                zone.stopBoost();
-            }
-        }
-        else if (command.type == "autoRegulateEnabled") {
-            await(zone.setZoneValveAutoRegulatedEnabledAsync(enabled));
-        }
-        else if (command.type == "targetAutoRegulatedTemperature") {
-            await(zone.setZoneTargetTemperatureAsync(command.targetTemperature));
-        }
-    }
-
     this.setZoneTargetTemperatureAsync = function (zoneCode, temperature) {
         var zone = zones[zoneCode];
         await(zone.setZoneTargetTemperatureAsync(temperature));

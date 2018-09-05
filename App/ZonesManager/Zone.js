@@ -47,6 +47,7 @@ function SmartBoostZoneControl() {
             var delta = targetTemperature - currentTemperature;
             delta = delta.toFixed(1);
             if (delta <= 0.2) {
+                console.log(delta);
                 return true;
             }
             else {
@@ -126,73 +127,18 @@ function DeadZoneSensorControl() {
     }
 }
 
-function BoostZoneControl(zoneCode,boostInfo) {
-    var callingForHeat;
-    var boostHandler;
-
-    constructor(boostInfo);
-
-    function constructor(boostInfo) {
-        if (!boostInfo.boostEnabled)
-            return;
-        var currentTime = Math.floor(new Date() / 1000);
-        var projectedFinishTime = boostInfo.boostStartTime + boostInfo.boostTime;
-        var timeToFinish = projectedFinishTime - currentTime;
-        var enabled = timeToFinish > 0;
-        if (enabled) {
-            startBoostInternally(timeToFinish);
-        }
-    }
-
-    this.startBoostAsync = function (boostTime) {
-        var boostStartTime = Math.floor(new Date() / 1000);        
-        startBoostInternally(boostTime);
-        var boostNewInfo = {
-            boostTime: boostTime,
-            boostStartTime: boostStartTime
-        };
-        await(sqlRepository.setZoneValveBoostInfo(zoneCode, boostNewInfo));
-
-    }
-    function startBoostInternally(boostTime) {
-        callingForHeat = true;
-        boostHandler = null;
-        var boostTimeMilis = 1000 * boostTime;
-        boostHandler=setTimeout(function () {
-            this.stopBoost();
-        }, boostTimeMilis);
-    }
-    this.stopBoost = function () {
-        clearTimeout(boostHandler);
-        callingForHeat = false;
-    }
-    this.isCallingForHeat = function(){
-        return callingForHeat;
-    }
-}
-
 function Zone(zoneCode, onZoneChangedAsync) {
     var lastReading;
     var deadZoneControl = new DeadZoneSensorControl();
     var smartBoostZoneControl = new SmartBoostZoneControl();
-    var boostZoneControl;
     var zoneRegulatinSetting;
     var asyncFx = async(function () {
         var zoneConfig = await(sqlRepository.getZoneValveConfigByZoneCodeAsync(zoneCode));
         smartBoostZoneControl.setTargetTemperature(zoneConfig.zoneMinimumTemperature);
         zoneRegulatinSetting = zoneConfig;
-        var boostInfo = {
-            boostTime: zoneConfig.boostTime,
-            boostStartTime: zoneConfig.boostStartTime,
-            boostEnabled: zoneConfig.boostEnabled
-        };
-        boostZoneControl = new BoostZoneControl(zoneCode, boostInfo);
-        this.startBoost = boostZoneControl.startBoost;
-        this.stopBoost = BoostZoneControl.stopBoost;
     });
     asyncFx();
-
-
+    
     this.ingestReadingAsync = function (zoneReading) {
         lastReading = zoneReading;
         deadZoneControl.onNewZoneReading();
@@ -212,9 +158,6 @@ function Zone(zoneCode, onZoneChangedAsync) {
         await(onZoneChangedAsync());
     }
     this.isCallingForHeatAsync = function () {
-        if (boostZoneControl.isCallingForHeat()) {
-            return true;
-        }
         if (!lastReading)
             return false;
         if (!zoneRegulatinSetting.zoneAutoRegulateEnabled) {
@@ -222,6 +165,7 @@ function Zone(zoneCode, onZoneChangedAsync) {
         }
         else {
             if (lastReading.temperature < zoneRegulatinSetting.zoneMinimumTemperature) {
+                console.log("normal logic turning zone on");
                 var controlsWantToStopHeat = getControlsWantToStopHeat();
                 if (controlsWantToStopHeat)
                     return false;

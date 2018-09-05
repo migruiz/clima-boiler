@@ -31,8 +31,6 @@
     <Compile Include="app.js" />
     <Compile Include="db-sqlite.js" />
     <Compile Include="firebaseSyncReceiver.js" />
-    <Compile Include="HotWaterBoostControl.js" />
-    <Compile Include="HotWaterBoostReceiver.js" />
     <Compile Include="individualValveOperationReceiver.js" />
     <Compile Include="heatingValvesMessageReceiver.js" />
     <Compile Include="individualValveManager.js" />

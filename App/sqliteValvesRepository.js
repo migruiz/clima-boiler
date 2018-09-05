@@ -34,16 +34,7 @@ exports.getValveStateAsync = function (valveCode) {
 }
 exports.getZoneValveConfigByZoneCodeAsync = function (zoneCode) {
     var result = await(sqliteDb.database().operateDatabaseAsync(function (db) {
-        var valveData = await(db.getAsync(`
-            select 
-            zoneCode
-            ,IFNULL(zoneAutoRegulateEnabled, 0) zoneAutoRegulateEnabled
-            ,IFNULL(zoneMinimumTemperature, 0) zoneMinimumTemperature
-            ,boostStartTime
-            ,boostTime
-            ,IFNULL(boostEnabled, 0) boostEnabled
-            from ZoneValvesSettings
-            where zoneCode= $zoneCode`,
+        var valveData = await(db.getAsync("select zoneCode,IFNULL(zoneAutoRegulateEnabled,0) zoneAutoRegulateEnabled ,IFNULL(zoneMinimumTemperature,0) zoneMinimumTemperature from ZoneValvesSettings where zoneCode=$zoneCode",
             {
                 $zoneCode: zoneCode
             }));
@@ -66,17 +57,6 @@ exports.setZoneValveinimumTemperature = function (zoneCode, zoneMinimumTemperatu
             {
                 $zoneCode: zoneCode,
                 $zoneMinimumTemperature: zoneMinimumTemperature
-            }));
-    }));
-}
-
-exports.setZoneValveBoostInfo = function (zoneCode, boostInfo) {
-    await(sqliteDb.database().operateDatabaseAsync(function (db) {
-        await(db.runAsync("update  ZoneValvesSettings set boostStartTime=$boostStartTime, boostTime=$boostTime,boostEnabled=1 where zoneCode=$zoneCode",
-            {
-                $zoneCode: zoneCode,
-                $boostStartTime: boostInfo.boostStartTime,
-                $boostTime:boostInfo.boostTime
             }));
     }));
 }
