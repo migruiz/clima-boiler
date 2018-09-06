@@ -97,7 +97,6 @@ function Valve(valveConfig) {
         }
         else {
             if (storedValveData.state == state) {
-                console.log("same state");
                 return;
             }
             var currentTimeStamp = Math.floor(new Date() / 1000);
