@@ -1,3 +1,4 @@
+var mqtt = require('./mqttCluster.js');
 global.config = {
     zwaveDriverPath: '/dev/ttyACM0',
     dbPath: 'c:\\valves.sqlite',
@@ -13,6 +14,15 @@ global.config = {
 
 
 var ZWaveMockMan = require('./ZWaveMock.js');
+
+global.mtqqLocalPath = "mqtt://localhost";
+mqtt.cluster().subscribeData('zonesChange', onZoneReadingUpdate);
+async function onZoneReadingUpdate(content) {
+    console.log(content.zoneReading);
+}
+
+return;
+
 
 //var ZWave = require('./node_modules/openzwave-shared/lib/openzwave-shared.js');
 var os = require('os');
