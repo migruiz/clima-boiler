@@ -1,13 +1,13 @@
 class ZoneTemperatureLimitModule {
     constructor(zoneManager) {
-        this.LowestAllowedTemperature = 21;
-        this.CurrentTemperature = null;
+        this.LowestAllowedTemperature;
+        this.CurrentTemperature;
         this.OnPriority = 90;
         this.OffPriority = 20;
     }
 
     async init() {
-        this.Monitored = await this.zoneManager.getLowestAllowedTemperatureAsync();
+        this.LowestAllowedTemperature = await this.zoneManager.getLowestAllowedTemperatureAsync();
         this.zoneManager.on('lowestAllowedTemperatureChanged', newLowestAllowedTemperature => {
             this.LowestAllowedTemperature = LowestAllowedTemperature;
             this.zoneManager.emit('zoneStateChanged');
@@ -18,13 +18,10 @@ class ZoneTemperatureLimitModule {
         });
     }
 
-    getModuleState() {
-        var underLimit=this.CurrentTemperature<this.LowestAllowedTemperature;
-        var moduleActive=this.CurrentTemperature?underLimit:false;
-        return {
-            State: moduleActive,
-            Priority: moduleActive? this.OnPriority : this.OffPriority
-        };
+    getModuleIsActive() {
+        var underLimit = this.CurrentTemperature < this.LowestAllowedTemperature;
+        var moduleActive = this.CurrentTemperature && this.LowestAllowedTemperature ? underLimit : false;
+        return moduleActive;
     }
 
 }

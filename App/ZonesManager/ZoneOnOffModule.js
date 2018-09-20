@@ -1,7 +1,7 @@
 
 class ZoneOnOffModule {
     constructor(zoneManager) {
-        this.Monitored = false;
+        this.Monitored;
         this.OnPriority = 100;
         this.OffPriority = 10;
 
@@ -13,11 +13,9 @@ class ZoneOnOffModule {
             this.zoneManager.emit('zoneStateChanged');
         });
     }
-    getModuleState() {
-        return {
-            State: this.Monitored,
-            Priority: this.Monitored ? this.OnPriority : this.OffPriority
-        };
+    getModuleIsActive() {
+        var moduleActive = this.Monitored ? this.Monitored : false;
+        return moduleActive;
     }
 
 }
