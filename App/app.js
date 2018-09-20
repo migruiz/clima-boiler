@@ -18,7 +18,7 @@ var ZWaveMockMan = require('./ZWaveMock.js');
 global.mtqqLocalPath = "mqtt://localhost";
 mqtt.cluster().subscribeData('zonesChange', onZoneReadingUpdate);
 async function onZoneReadingUpdate(content) {
-    console.log(content.zoneReading);
+    console.log(content);
 }
 
 return;
