@@ -1,4 +1,5 @@
 var mqtt = require('./mqttCluster.js');
+var zonesCreator = require('./ZonesManager/Zone.js');
 global.config = {
     zwaveDriverPath: '/dev/ttyACM0',
     dbPath: 'c:\\valves.sqlite',
@@ -11,12 +12,26 @@ global.config = {
         hotWaterValve: { nodeId: 4, instanceId: 3, code: 'hotWaterValve' }
     }
 };
+global.zones= {
+    masterroom: { sensorId: 'BC', boilerZone: 'upstairs' },    
+    livingroom: { sensorId: 'E9', boilerZone: 'downstairs'},
+    playroom: { sensorId: 'C1', boilerZone: 'upstairs' },  
+    masterbathroom: { sensorId: 'E0', boilerZone: 'upstairs' }, 
+    computerroom: { sensorId: 'CC', boilerZone: 'upstairs'},
+    secondbedroom: { sensorId: 'C6', boilerZone: 'upstairs' },
+    outside: { sensorId: 'CD' },
+}
+
 
 
 var ZWaveMockMan = require('./ZWaveMock.js');
 
 global.mtqqLocalPath = "mqtt://localhost";
 (async function(){
+    for (var key in global.zones) {
+        var zone=global.zones[key]
+        zone.zoneControl=await zonesCreator.newInstanceAsync(key)
+    }
     var mqttCluster=await mqtt.getClusterAsync() 
     mqttCluster.subscribeData('zonesChange', onZoneReadingUpdate);
     async function onZoneReadingUpdate(content) {
