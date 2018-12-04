@@ -35,7 +35,9 @@ global.mtqqLocalPath = "mqtt://localhost";
     var mqttCluster=await mqtt.getClusterAsync() 
     mqttCluster.subscribeData('zonesChange', onZoneReadingUpdate);
     async function onZoneReadingUpdate(content) {
-        console.log(content);
+        console.log(content)
+        var zone=global.zones[content.zoneCode]
+        zone.zoneControl.updateCurrentTemperature(content.temperature)
     }
   })();
 

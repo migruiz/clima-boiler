@@ -9,6 +9,7 @@ class ZoneOnOffModule {
     }
     async initAsync() {
     }
+    updateCurrentTemperature(temperature){}
     getModuleIsActive() {
         var moduleActive = this.Monitored ? this.Monitored : false;
         return moduleActive;

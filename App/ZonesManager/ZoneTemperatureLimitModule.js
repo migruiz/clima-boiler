@@ -9,6 +9,9 @@ class ZoneTemperatureLimitModule {
 
     async initAsync() {
     }
+    updateCurrentTemperature(temperature){
+        this.CurrentTemperature=temperature
+    }
 
     getModuleIsActive() {
         var underLimit = this.CurrentTemperature < this.LowestAllowedTemperature;
