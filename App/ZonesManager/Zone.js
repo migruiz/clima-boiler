@@ -10,7 +10,12 @@ class Zone {
       this.modules.push(new ZoneOnOffModule(this.zoneCode));
       this.modules.push(new ZoneTemperatureLimitModule(this.zoneCode));
       for (let index = 0; index < this.modules.length; index++) {
-        await this.modules[index].initAsync();
+        var module=this.modules[index];
+        await module.initAsync();
+        module.on('stateChanged',function(va){
+          console.log(va)
+        })
+
       }
       
     }

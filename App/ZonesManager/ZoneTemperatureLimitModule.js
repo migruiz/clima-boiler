@@ -1,5 +1,7 @@
-class ZoneTemperatureLimitModule {
+const EventEmitter = require( 'events' );
+class ZoneTemperatureLimitModule extends EventEmitter {
     constructor(zoneCode) {
+        super()
         this.zoneCode=zoneCode;
         this.LowestAllowedTemperature;
         this.CurrentTemperature;

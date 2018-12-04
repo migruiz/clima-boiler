@@ -1,6 +1,7 @@
-
-class ZoneOnOffModule {
+const EventEmitter = require( 'events' );
+class ZoneOnOffModule extends EventEmitter {
     constructor(zoneCode) {
+        super()
         this.zoneCode=zoneCode;
         this.Monitored;
         this.OnPriority = 100;
@@ -9,7 +10,10 @@ class ZoneOnOffModule {
     }
     async initAsync() {
     }
-    updateCurrentTemperature(temperature){}
+    updateCurrentTemperature(temperature){
+
+        this.emit( 'stateChanged',temperature);
+    }
     getModuleIsActive() {
         var moduleActive = this.Monitored ? this.Monitored : false;
         return moduleActive;
