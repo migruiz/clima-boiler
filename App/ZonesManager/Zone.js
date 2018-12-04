@@ -1,7 +1,9 @@
+const EventEmitter = require( 'events' );
 const ZoneOnOffModule=require('./ZoneOnOffModule.js');
 const ZoneTemperatureLimitModule=require('./ZoneTemperatureLimitModule.js');
-class Zone {
+class Zone extends EventEmitter {
     constructor(zoneCode) {
+      super()
       this.zoneCode=zoneCode;
       this.modules=[];
       this.zoneCode=zoneCode;
@@ -14,8 +16,7 @@ class Zone {
         var module=this.modules[index];
         await module.initAsync();
         module.on('stateChanged',function(){
-          var callingForHeat=self.isCallingForHeat()
-          console.log(callingForHeat)
+          self.emit('stateChanged',self);
         })
 
       }

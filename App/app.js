@@ -31,6 +31,11 @@ global.mtqqLocalPath = "mqtt://localhost";
     for (var key in global.zones) {
         var zone=global.zones[key]
         zone.zoneControl=await zonesCreator.newInstanceAsync(key)
+        zone.zoneControl.on('stateChanged',function(reportingzone){
+            var isCallingForHeat=reportingzone.isCallingForHeat();
+            console.log(reportingzone.zoneCode)
+            console.log(isCallingForHeat)
+          })
     }
     var mqttCluster=await mqtt.getClusterAsync() 
     mqttCluster.subscribeData('zonesChange', onZoneReadingUpdate);
