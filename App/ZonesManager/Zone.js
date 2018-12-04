@@ -9,11 +9,13 @@ class Zone {
     async initAsync(){
       this.modules.push(new ZoneOnOffModule(this.zoneCode));
       this.modules.push(new ZoneTemperatureLimitModule(this.zoneCode));
+      var self=this
       for (let index = 0; index < this.modules.length; index++) {
         var module=this.modules[index];
         await module.initAsync();
-        module.on('stateChanged',function(va){
-          console.log(va)
+        module.on('stateChanged',function(){
+          var callingForHeat=self.isCallingForHeat()
+          console.log(callingForHeat)
         })
 
       }
@@ -26,9 +28,12 @@ class Zone {
     }
 
     isCallingForHeat(){
-      for (let module in this.modules) {
-        
+      for (let index = 0; index < this.modules.length; index++) {
+        var module=this.modules[index];
+        if (module.getModuleIsActive())
+          return true
       }
+      return false;
 
     }
   }

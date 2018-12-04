@@ -13,6 +13,7 @@ class ZoneTemperatureLimitModule extends EventEmitter {
     }
     updateCurrentTemperature(temperature){
         this.CurrentTemperature=temperature
+        this.emit( 'stateChanged');
     }
 
     getModuleIsActive() {

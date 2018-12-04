@@ -10,10 +10,7 @@ class ZoneOnOffModule extends EventEmitter {
     }
     async initAsync() {
     }
-    updateCurrentTemperature(temperature){
-
-        this.emit( 'stateChanged',temperature);
-    }
+    updateCurrentTemperature(temperature){}
     getModuleIsActive() {
         var moduleActive = this.Monitored ? this.Monitored : false;
         return moduleActive;
