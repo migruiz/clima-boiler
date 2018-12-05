@@ -13,6 +13,7 @@ global.boilerValves={
     downstairs:new BoilerValve('downstairs')
 }
 global.mtqqLocalPath = "mqtt://localhost";
+global.dbPath= 'c:\\valves.sqlite';
 (async function(){
     for (var key in global.zonesConfiguration) {
         var zoneConfig=global.zonesConfiguration[key]
