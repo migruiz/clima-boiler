@@ -43,10 +43,6 @@ global.mtqqLocalPath = "mqtt://localhost";
   })();
 
   function subscribeToEvents(mqttCluster){
-    mqttCluster.subscribeData('zonesChange', function(content) {
-        global.boilerValves.upstairs.reportTemperaturaChange(content.zoneCode,content.temperature)
-        global.boilerValves.downstairs.reportTemperaturaChange(content.zoneCode,content.temperature)
-    });
     mqttCluster.subscribeData('automaticboilercontrol/upstairs',function(content) {
         console.log('automaticboilercontrol/upstairs')
         console.log(content)

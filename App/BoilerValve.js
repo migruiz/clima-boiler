@@ -21,17 +21,6 @@ class BoilerValve{
               })
           }
     }
-    reportTemperaturaChange(zoneCode,temperature){
-        
-        for (let index = 0; index < this.zones.length; index++) {
-            var zone=this.zones[index];
-            if (zone.zoneCode===zoneCode)
-            {
-                zone.updateCurrentTemperature(temperature)
-                return
-            }
-          }
-    }
     getValveNeededState(){
         for (let index = 0; index < this.zones.length; index++) {
             var zone=this.zones[index];

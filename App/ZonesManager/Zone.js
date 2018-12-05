@@ -22,11 +22,6 @@ class Zone extends EventEmitter {
       }
       
     }
-    updateCurrentTemperature(temperature){
-      for (let index = 0; index < this.modules.length; index++) {
-        this.modules[index].updateCurrentTemperature(temperature)
-      }
-    }
 
     getisCallingForHeat(){
       var heatStatePriorities = [];

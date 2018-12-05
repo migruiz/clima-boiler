@@ -1,3 +1,4 @@
+var mqtt = require('../mqttCluster.js');
 const ZoneModule=require('./ZoneModule.js');
 var sqliteRepository = require('../sqliteValvesRepository.js');
 class ZoneTemperatureLimitModule extends ZoneModule {
@@ -11,13 +12,16 @@ class ZoneTemperatureLimitModule extends ZoneModule {
 
     async initAsync() {
         this.LowestAllowedTemperature=await sqliteRepository.getZoneMinimumTemperatureAsync(this.zoneCode)
+        var mqttCluster=await mqtt.getClusterAsync() 
+        var self=this
+        mqttCluster.subscribeData("zoneClimateChange/"+this.zoneCode, function(content) {
+            self.CurrentTemperature=content.temperature
+            self.reportStateChange()
+        });
         console.log(this.zoneCode)
         console.log(this.LowestAllowedTemperature)
     }
-    updateCurrentTemperature(temperature){
-        this.CurrentTemperature=temperature
-        super.reportStateChange()
-    }
+    
 
     getisCallingForHeat() {
         var underLimit = this.CurrentTemperature < this.LowestAllowedTemperature;
