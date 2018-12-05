@@ -1,4 +1,5 @@
 const ZoneModule=require('./ZoneModule.js');
+var sqliteRepository = require('../sqliteValvesRepository.js');
 class ZoneTemperatureLimitModule extends ZoneModule {
     constructor(zoneCode) {
         super(zoneCode)
@@ -9,6 +10,9 @@ class ZoneTemperatureLimitModule extends ZoneModule {
     }
 
     async initAsync() {
+        this.LowestAllowedTemperature=await sqliteRepository.getZoneMinimumTemperatureAsync(this.zoneCode)
+        console.log(this.zoneCode)
+        console.log(this.LowestAllowedTemperature)
     }
     updateCurrentTemperature(temperature){
         this.CurrentTemperature=temperature

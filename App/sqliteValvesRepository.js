@@ -9,12 +9,23 @@ exports.updateValveStateAsync = async function (valveState) {
             $triggeredBy: valveState.triggeredBy
         }));
 }
-exports.getzoneAutoRegulateEnabledAsync = async function (zoneCode) {
+exports.getZoneAutoRegulateEnabledAsync = async function (zoneCode) {
     var result = await zonesdb.instance().operate(db=>db.getAsync("select IFNULL(zoneAutoRegulateEnabled,0) zoneAutoRegulateEnabled  from ZoneValvesSettings where zoneCode=$zoneCode",{
         $zoneCode: zoneCode
     }));
     if (result){
         return result.zoneAutoRegulateEnabled
+    }
+    else{
+        return null
+    }
+}
+exports.getZoneMinimumTemperatureAsync = async function (zoneCode) {
+    var result = await zonesdb.instance().operate(db=>db.getAsync("select zoneMinimumTemperature zoneMinimumTemperature from ZoneValvesSettings where zoneCode=$zoneCode",{
+        $zoneCode: zoneCode
+    }));
+    if (result){
+        return result.zoneMinimumTemperature
     }
     else{
         return null

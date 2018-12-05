@@ -9,7 +9,7 @@ class ZoneOnOffModule extends ZoneModule {
 
     }
     async initAsync() {
-            this.Monitored=await sqliteRepository.getzoneAutoRegulateEnabledAsync(this.zoneCode)
+            this.Monitored=await sqliteRepository.getZoneAutoRegulateEnabledAsync(this.zoneCode)
             console.log(this.zoneCode)
             console.log(this.Monitored)
         
