@@ -38,17 +38,24 @@ global.mtqqLocalPath = "mqtt://localhost";
     await global.boilerValves.upstairs.initAsync();
     await global.boilerValves.downstairs.initAsync();
     var mqttCluster=await mqtt.getClusterAsync() 
-    mqttCluster.subscribeData('zonesChange', onZoneReadingUpdate);
-    async function onZoneReadingUpdate(content) {
-        console.log(content)
-        var zone=global.zonesConfiguration[content.zoneCode]
-        if (zone){
-            var boilerValve=global.boilerValves[zone]
-            boilerValve.reportTemperaturaChange(content.zoneCode,content.temperature)
-        }
-    }
+    subscribeToEvents(mqttCluster)
+
   })();
 
+  function subscribeToEvents(mqttCluster){
+    mqttCluster.subscribeData('zonesChange', function(content) {
+        global.boilerValves.upstairs.reportTemperaturaChange(content.zoneCode,content.temperature)
+        global.boilerValves.downstairs.reportTemperaturaChange(content.zoneCode,content.temperature)
+    });
+    mqttCluster.subscribeData('automaticboilercontrol/upstairs',function(content) {
+        console.log('automaticboilercontrol/upstairs')
+        console.log(content)
+    })
+    mqttCluster.subscribeData('automaticboilercontrol/downstairs',function(content) {
+        console.log('automaticboilercontrol/downstairs')
+        console.log(content)
+    })
+  }
 
 return;
 
