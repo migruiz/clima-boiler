@@ -31,7 +31,7 @@ class Zone extends EventEmitter {
     isCallingForHeat(){
       for (let index = 0; index < this.modules.length; index++) {
         var module=this.modules[index];
-        if (module.getModuleIsActive())
+        if (module.getCallingForHeatPriority())
           return true
       }
       return false;

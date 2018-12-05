@@ -1,12 +1,13 @@
-class Zone {
-    constructor() {
-      this.appId=null;
+const EventEmitter = require( 'events' );
+class ZoneModule extends EventEmitter {
+    constructor(zoneCode) {
+      super()
+      this.zoneCode=zoneCode;
     }
-    async initAppAsync(playlistId){        
-        this.playlistId=playlistId;
-    }
+    async initAsync() {}
     
-
+    getCallingForHeatPriority(){}
 
   }
+  module.exports = ZoneModule;
  

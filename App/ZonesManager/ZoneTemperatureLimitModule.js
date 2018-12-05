@@ -1,8 +1,7 @@
-const EventEmitter = require( 'events' );
-class ZoneTemperatureLimitModule extends EventEmitter {
+const ZoneModule=require('./ZoneModule.js');
+class ZoneTemperatureLimitModule extends ZoneModule {
     constructor(zoneCode) {
-        super()
-        this.zoneCode=zoneCode;
+        super(zoneCode)
         this.LowestAllowedTemperature;
         this.CurrentTemperature;
         this.OnPriority = 90;
@@ -16,7 +15,7 @@ class ZoneTemperatureLimitModule extends EventEmitter {
         this.emit( 'stateChanged');
     }
 
-    getModuleIsActive() {
+    getCallingForHeatPriority() {
         var underLimit = this.CurrentTemperature < this.LowestAllowedTemperature;
         var moduleActive = this.CurrentTemperature && this.LowestAllowedTemperature ? underLimit : false;
         return moduleActive;
