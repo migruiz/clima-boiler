@@ -1,3 +1,4 @@
+var mqtt = require('../mqttCluster.js');
 const ZoneModule=require('./ZoneModule.js');
 var sqliteRepository = require('../sqliteValvesRepository.js');
 class ZoneOnOffModule extends ZoneModule {
@@ -9,7 +10,13 @@ class ZoneOnOffModule extends ZoneModule {
 
     }
     async initAsync() {
-            this.Monitored=await sqliteRepository.getZoneAutoRegulateEnabledAsync(this.zoneCode)        
+            this.Monitored=await sqliteRepository.getZoneAutoRegulateEnabledAsync(this.zoneCode)     
+            var mqttCluster=await mqtt.getClusterAsync() 
+            var self=this
+            mqttCluster.subscribeData("zoneIsMonitored/"+this.zoneCode, function(content) {
+                self.Monitored=content.Monitored
+                self.reportStateChange()
+            });   
     }
     getisCallingForHeat() {
         var moduleActive = this.Monitored ? this.Monitored : false;
