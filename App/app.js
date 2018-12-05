@@ -21,8 +21,8 @@ global.zonesConfiguration= {
     secondbedroom: 'upstairs'
 }
 global.boilerValves={
-    upstairs:new BoilerValve(),
-    downstairs:new BoilerValve()
+    upstairs:new BoilerValve('upstairs'),
+    downstairs:new BoilerValve('downstairs')
 }
 
 
@@ -37,16 +37,6 @@ global.mtqqLocalPath = "mqtt://localhost";
     }
     await global.boilerValves.upstairs.initAsync();
     await global.boilerValves.downstairs.initAsync();
-    global.boilerValves.upstairs.on('stateChanged',function(boilerValve){
-        var shouldBeOn=boilerValve.getValveNeededState();
-        console.log("upstairs")
-        console.log(shouldBeOn)
-      })
-    global.boilerValves.downstairs.on('stateChanged',function(boilerValve){
-        var shouldBeOn=boilerValve.getValveNeededState();
-        console.log("downstairs")
-        console.log(shouldBeOn)
-      })
     var mqttCluster=await mqtt.getClusterAsync() 
     mqttCluster.subscribeData('zonesChange', onZoneReadingUpdate);
     async function onZoneReadingUpdate(content) {
