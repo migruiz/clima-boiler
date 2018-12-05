@@ -2,10 +2,11 @@ const EventEmitter = require( 'events' );
 var Zone = require('./ZonesManager/Zone.js');
 class BoilerValve  extends EventEmitter {
     constructor(zoneCode) {
+       super()
       this.zones=[];
     }
     addZone(zoneCode){
-        zones.push(new Zone(zoneCode))  
+        this.zones.push(new Zone(zoneCode))  
     }
     async initAsync(){
         for (let index = 0; index < this.zones.length; index++) {
@@ -15,6 +16,16 @@ class BoilerValve  extends EventEmitter {
             zone.on('stateChanged',function(reportingzone){
                 self.emit('stateChanged',self);
               })
+          }
+    }
+    reportTemperaturaChange(zoneCode,temperature){
+        for (let index = 0; index < this.zones.length; index++) {
+            var zone=this.zones[index];
+            if (zone.zoneCode===zoneCode)
+            {
+                zone.updateCurrentTemperature(temperature)
+                return
+            }
           }
     }
     getValveNeededState(){
