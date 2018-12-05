@@ -43,8 +43,4 @@ class Zone extends EventEmitter {
     }
   }
 
-  exports.newInstanceAsync = async function (zoneCode) {
-    var instance = new Zone(zoneCode);
-    await instance.initAsync();
-    return instance;
-}
+  module.exports = Zone;

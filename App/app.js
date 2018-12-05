@@ -1,5 +1,4 @@
 var mqtt = require('./mqttCluster.js');
-var zonesCreator = require('./ZonesManager/Zone.js');
 const BoilerValve=require('./BoilerValve')
 global.config = {
     zwaveDriverPath: '/dev/ttyACM0',
@@ -13,14 +12,14 @@ global.config = {
         hotWaterValve: { nodeId: 4, instanceId: 3, code: 'hotWaterValve' }
     }
 };
-global.zones= {
-    masterroom: { sensorId: 'BC', boilerZone: 'upstairs' },    
-    livingroom: { sensorId: 'E9', boilerZone: 'downstairs'},
-    playroom: { sensorId: 'C1', boilerZone: 'upstairs' },  
-    masterbathroom: { sensorId: 'E0', boilerZone: 'upstairs' }, 
-    computerroom: { sensorId: 'CC', boilerZone: 'upstairs'},
-    secondbedroom: { sensorId: 'C6', boilerZone: 'upstairs' },
-    outside: { sensorId: 'CD' },
+global.zonesConfiguration= {
+    masterroom: { boilerZone: 'upstairs' },    
+    livingroom: { boilerZone: 'downstairs'},
+    playroom: { boilerZone: 'upstairs' },  
+    masterbathroom: {  boilerZone: 'upstairs' }, 
+    computerroom: {  boilerZone: 'upstairs'},
+    secondbedroom: { boilerZone: 'upstairs' },
+    outside: { },
 }
 global.boilerValves={
     upstairs:new BoilerValve(),
@@ -32,19 +31,15 @@ var ZWaveMockMan = require('./ZWaveMock.js');
 
 global.mtqqLocalPath = "mqtt://localhost";
 (async function(){
-    for (var key in global.zones) {
-        var zone=global.zones[key]
-        if (zone.boilerZone){
+    for (var key in global.zonesConfiguration) {
+        var zoneConfig=global.zonesConfiguration[key]
+        if (zoneConfig.boilerZone){
             var boilerValve=global.boilerValves[zone.boilerZone]
-            boilerValve.zones.push(zone)
-        }
-        zone.zoneControl=await zonesCreator.newInstanceAsync(key)
-        zone.zoneControl.on('stateChanged',function(reportingzone){
-            var isCallingForHeat=reportingzone.getisCallingForHeat();
-            console.log(reportingzone.zoneCode)
-            console.log(isCallingForHeat)
-          })
+            boilerValve.addZone(key)
+        }  
     }
+    await global.boilerValves.upstairs.initAsync();
+    await global.boilerValves.downstairs.initAsync();
     var mqttCluster=await mqtt.getClusterAsync() 
     mqttCluster.subscribeData('zonesChange', onZoneReadingUpdate);
     async function onZoneReadingUpdate(content) {
