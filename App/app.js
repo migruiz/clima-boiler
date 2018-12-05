@@ -1,5 +1,6 @@
 var mqtt = require('./mqttCluster.js');
 var zonesCreator = require('./ZonesManager/Zone.js');
+const BoilerValve=require('./BoilerValve')
 global.config = {
     zwaveDriverPath: '/dev/ttyACM0',
     dbPath: 'c:\\valves.sqlite',
@@ -22,8 +23,8 @@ global.zones= {
     outside: { sensorId: 'CD' },
 }
 global.boilerValves={
-    upstairs:{zones:[]},
-    downstairs:{zones:[]}
+    upstairs:new BoilerValve(),
+    downstairs:new BoilerValve()
 }
 
 
