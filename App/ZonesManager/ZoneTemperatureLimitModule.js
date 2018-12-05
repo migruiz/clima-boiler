@@ -12,7 +12,7 @@ class ZoneTemperatureLimitModule extends ZoneModule {
     }
     updateCurrentTemperature(temperature){
         this.CurrentTemperature=temperature
-        this.emit( 'stateChanged');
+        super.reportStateChange()
     }
 
     getCallingForHeatPriority() {
