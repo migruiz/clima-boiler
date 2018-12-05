@@ -18,8 +18,7 @@ global.zonesConfiguration= {
     playroom: { boilerZone: 'upstairs' },  
     masterbathroom: {  boilerZone: 'upstairs' }, 
     computerroom: {  boilerZone: 'upstairs'},
-    secondbedroom: { boilerZone: 'upstairs' },
-    outside: { },
+    secondbedroom: { boilerZone: 'upstairs' }
 }
 global.boilerValves={
     upstairs:new BoilerValve(),
@@ -33,10 +32,8 @@ global.mtqqLocalPath = "mqtt://localhost";
 (async function(){
     for (var key in global.zonesConfiguration) {
         var zoneConfig=global.zonesConfiguration[key]
-        if (zoneConfig.boilerZone){
-            var boilerValve=global.boilerValves[zoneConfig.boilerZone]
-            boilerValve.addZone(key)
-        }  
+        var boilerValve=global.boilerValves[zoneConfig.boilerZone]
+        boilerValve.addZone(key) 
     }
     await global.boilerValves.upstairs.initAsync();
     await global.boilerValves.downstairs.initAsync();
@@ -55,8 +52,10 @@ global.mtqqLocalPath = "mqtt://localhost";
     async function onZoneReadingUpdate(content) {
         console.log(content)
         var zone=global.zonesConfiguration[content.zoneCode]
-        var boilerValve=global.boilerValves[zone.boilerZone]
-        boilerValve.reportTemperaturaChange(content.zoneCode,content.temperature)
+        if (zone){
+            var boilerValve=global.boilerValves[zone.boilerZone]
+            boilerValve.reportTemperaturaChange(content.zoneCode,content.temperature)
+        }
     }
   })();
 
