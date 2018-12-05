@@ -21,7 +21,10 @@ global.zones= {
     secondbedroom: { sensorId: 'C6', boilerZone: 'upstairs' },
     outside: { sensorId: 'CD' },
 }
-
+global.boilerValves={
+    upstairs:{zones:[]},
+    downstairs:{zones:[]}
+}
 
 
 var ZWaveMockMan = require('./ZWaveMock.js');
@@ -30,6 +33,10 @@ global.mtqqLocalPath = "mqtt://localhost";
 (async function(){
     for (var key in global.zones) {
         var zone=global.zones[key]
+        if (zone.boilerZone){
+            var boilerValve=global.boilerValves[zone.boilerZone]
+            boilerValve.zones.push(zone)
+        }
         zone.zoneControl=await zonesCreator.newInstanceAsync(key)
         zone.zoneControl.on('stateChanged',function(reportingzone){
             var isCallingForHeat=reportingzone.getisCallingForHeat();
