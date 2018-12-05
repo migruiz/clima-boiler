@@ -32,7 +32,7 @@ global.mtqqLocalPath = "mqtt://localhost";
         var zone=global.zones[key]
         zone.zoneControl=await zonesCreator.newInstanceAsync(key)
         zone.zoneControl.on('stateChanged',function(reportingzone){
-            var isCallingForHeat=reportingzone.isCallingForHeat();
+            var isCallingForHeat=reportingzone.getisCallingForHeat();
             console.log(reportingzone.zoneCode)
             console.log(isCallingForHeat)
           })

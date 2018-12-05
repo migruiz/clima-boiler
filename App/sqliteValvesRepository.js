@@ -14,7 +14,7 @@ exports.getZoneAutoRegulateEnabledAsync = async function (zoneCode) {
         $zoneCode: zoneCode
     }));
     if (result){
-        return result.zoneAutoRegulateEnabled
+        return Boolean(result.zoneAutoRegulateEnabled)
     }
     else{
         return null
