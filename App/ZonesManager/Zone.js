@@ -28,10 +28,10 @@ class Zone extends EventEmitter {
       }
     }
 
-    isCallingForHeat(){
+    getisCallingForHeat(){
       for (let index = 0; index < this.modules.length; index++) {
         var module=this.modules[index];
-        if (module.getCallingForHeatPriority())
+        if (module.getisCallingForHeat())
           return true
       }
       return false;

@@ -9,13 +9,10 @@ class ZoneOnOffModule extends ZoneModule {
 
     }
     async initAsync() {
-            this.Monitored=await sqliteRepository.getZoneAutoRegulateEnabledAsync(this.zoneCode)
-            console.log(this.zoneCode)
-            console.log(this.Monitored)
-        
+            this.Monitored=await sqliteRepository.getZoneAutoRegulateEnabledAsync(this.zoneCode)        
     }
     updateCurrentTemperature(temperature){}
-    getCallingForHeatPriority() {
+    getisCallingForHeat() {
         var moduleActive = this.Monitored ? this.Monitored : false;
         return moduleActive;
     }

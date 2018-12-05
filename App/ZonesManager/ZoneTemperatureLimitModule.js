@@ -19,7 +19,7 @@ class ZoneTemperatureLimitModule extends ZoneModule {
         super.reportStateChange()
     }
 
-    getCallingForHeatPriority() {
+    getisCallingForHeat() {
         var underLimit = this.CurrentTemperature < this.LowestAllowedTemperature;
         var moduleActive = this.CurrentTemperature && this.LowestAllowedTemperature ? underLimit : false;
         return moduleActive;
