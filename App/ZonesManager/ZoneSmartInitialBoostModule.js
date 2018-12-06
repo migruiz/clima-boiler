@@ -6,37 +6,62 @@ class ZoneSmartInitialBoostModule {
         this.OffPriority = 30;
         this.ZoneRequestingHeat = false;
         this.OnBoostInterval = false;
+        this.requesingtHeatInterval=null;
+        this.coolingOffInterval=null;
     }
 
     async init() {
-        this.LowestAllowedTemperature = await this.zoneManager.getLowestAllowedTemperatureAsync();
-        this.zoneManager.on('lowestAllowedTemperatureChanged', newLowestAllowedTemperature => {
-            this.LowestAllowedTemperature = LowestAllowedTemperature;
-            this.zoneManager.emit('zoneStateChanged');
-        });
-        this.zoneManager.on('currentTemperatureChanged', newTemperature => {
-            this.CurrentTemperature = newTemperature;
 
-            if (this.CurrentTemperature < this.LowestAllowedTemperature) {
-                if (this.OnBoostInterval)
-                    return;
-                this.OnBoostInterval = true;
-                this.ZoneRequestingHeat = true;
-                this.zoneManager.emit('zoneStateChanged');
-                setTimeout(this.onBoostOnIntervalFinished, 1000 * 60 * 5);
-            }
+        this.LowestAllowedTemperature=await sqliteRepository.getZoneMinimumTemperatureAsync(this.zoneCode)
+        var mqttCluster=await mqtt.getClusterAsync() 
+        var self=this
+        mqttCluster.subscribeData("zoneClimateChange/"+this.zoneCode, onCurrentTemperatureChanged);
+        mqttCluster.subscribeData("zoneLowestAllowedTemperature/"+this.zoneCode, function(content) {
+            self.LowestAllowedTemperature=content.temperature
+            this.reset();
+            self.reportStateChange()
         });
     }
 
+    
+    onCurrentTemperatureChanged(content){
+        if (isInRangeOfControl()){
+            if (this.OnBoostInterval)
+                return;   
+            this.OnBoostInterval = true;            
+            this.ZoneRequestingHeat = true; 
+            this.reportStateChange()
+            this.requesingtHeatInterval=setTimeout(this.onBoostOnIntervalFinished, 1000 * 60 * 5);
+        }
+        else{
+            this.reset();
+            this.reportStateChange()
+        }
+    }
+    reset(){
+        this.ZoneRequestingHeat = false;
+        this.OnBoostInterval = false
+        clearTimeout(this.requesingtHeatInterval)
+        clearTimeout(this.coolingOffInterval)
+
+    }
     onBoostOnIntervalFinished() {
         this.ZoneRequestingHeat = false;
-        this.zoneManager.emit('zoneStateChanged');
-        setTimeout(() => { this.OnBoostInterval = false; }, 1000 * 60 * 5);
+        this.reportStateChange()
+        coolingOffInterval=setTimeout(() => { this.OnBoostInterval = false; }, 1000 * 60 * 5);
     }
 
-    getModuleIsActive() {
-        var moduleActive = this.CurrentTemperature && this.LowestAllowedTemperature ? this.ZoneRequestingHeat : false;
-        return moduleActive;
+    getisCallingForHeat() {
+        return this.ZoneRequestingHeat;
+    }
+
+    isInRangeOfControl() {
+        if (!this.LowestAllowedTemperature)           
+            return false;
+        if (!this.CurrentTemperature)           
+            return false;
+        var degreesToReachTarget =this.LowestAllowedTemperature-this.CurrentTemperature;
+        return degreesToReachTarget>0 && degreesToReachTarget<0.3
     }
 
 }
