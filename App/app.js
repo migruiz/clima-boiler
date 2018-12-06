@@ -15,7 +15,7 @@ global.boilerValves={
 //global.mtqqLocalPath = "mqtt://localhost";
 global.mtqqLocalPath = process.env.MQTTLOCAL;
 //global.dbPath= 'c:\\valves.sqlite';
-global.dbPath = '/ClimaBoiler/valves.sqlite'
+global.dbPath = '/ClimaBoiler/valves.sqlite';
 (async function(){
     for (var key in global.zonesConfiguration) {
         var zoneConfig=global.zonesConfiguration[key]
