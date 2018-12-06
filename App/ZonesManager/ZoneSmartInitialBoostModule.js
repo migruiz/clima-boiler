@@ -1,5 +1,8 @@
-class ZoneSmartInitialBoostModule {
-    constructor(zoneManager) {
+var mqtt = require('../mqttCluster.js');
+const ZoneModule=require('./ZoneModule.js');
+class ZoneSmartInitialBoostModule extends ZoneModule {
+    constructor(zoneCode) {
+        super(zoneCode)
         this.LowestAllowedTemperature;
         this.CurrentTemperature;
         this.OnPriority = 80;
@@ -18,7 +21,7 @@ class ZoneSmartInitialBoostModule {
         mqttCluster.subscribeData("zoneClimateChange/"+this.zoneCode, onCurrentTemperatureChanged);
         mqttCluster.subscribeData("zoneLowestAllowedTemperature/"+this.zoneCode, function(content) {
             self.LowestAllowedTemperature=content.temperature
-            this.reset();
+            self.reset();
             self.reportStateChange()
         });
     }
@@ -55,7 +58,7 @@ class ZoneSmartInitialBoostModule {
         return this.ZoneRequestingHeat;
     }
     getIsActive() {
-        return isInRangeOfControl()
+        return this.isInRangeOfControl()
     }
 
     isInRangeOfControl() {
@@ -68,3 +71,4 @@ class ZoneSmartInitialBoostModule {
     }
 
 }
+module.exports = ZoneSmartInitialBoostModule;
