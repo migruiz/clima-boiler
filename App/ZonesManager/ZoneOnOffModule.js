@@ -18,9 +18,11 @@ class ZoneOnOffModule extends ZoneModule {
                 self.reportStateChange()
             });   
     }
+    getIsActive(){
+        return true
+    }
     getisCallingForHeat() {
-        var moduleActive = this.Monitored ? this.Monitored : false;
-        return moduleActive;
+        return this.Monitored ? this.Monitored : false;
     }
 
 }

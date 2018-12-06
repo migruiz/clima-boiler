@@ -28,9 +28,14 @@ class ZoneTemperatureLimitModule extends ZoneModule {
     
 
     getisCallingForHeat() {
-        var underLimit = this.CurrentTemperature < this.LowestAllowedTemperature;
-        var moduleActive = this.CurrentTemperature && this.LowestAllowedTemperature ? underLimit : false;
-        return moduleActive;
+        if (!this.LowestAllowedTemperature)           
+            return false;
+        if (!this.CurrentTemperature)           
+            return false;
+        return this.CurrentTemperature < this.LowestAllowedTemperature;
+    }
+    getIsActive() {
+        return true
     }
 
 }

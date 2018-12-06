@@ -27,9 +27,12 @@ class Zone extends EventEmitter {
       var heatStatePriorities = [];
       for (let index = 0; index < this.modules.length; index++) {
         var module=this.modules[index];
-        var callingForHeat=module.getisCallingForHeat()
-        var priority=callingForHeat?module.OnPriority:module.OffPriority
-        heatStatePriorities.push({value:callingForHeat,priority:priority})
+        var isActive=module.getIsActive();
+        if (isActive){
+          var callingForHeat=module.getisCallingForHeat()
+          var priority=callingForHeat?module.OnPriority:module.OffPriority
+          heatStatePriorities.push({value:callingForHeat,priority:priority})
+        }
       }
       var listOrderedByPriority=heatStatePriorities.sort((a, b) => a.priority-b.priority);
       var hightestPriority=listOrderedByPriority[0]

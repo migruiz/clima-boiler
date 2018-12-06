@@ -7,6 +7,7 @@ class ZoneModule extends EventEmitter {
     async initAsync() {}
     
     getisCallingForHeat(){}
+    getIsActive(){}
     reportStateChange(){
       this.emit( 'stateChanged');
     }

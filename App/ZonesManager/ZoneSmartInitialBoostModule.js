@@ -54,6 +54,9 @@ class ZoneSmartInitialBoostModule {
     getisCallingForHeat() {
         return this.ZoneRequestingHeat;
     }
+    getIsActive() {
+        return isInRangeOfControl()
+    }
 
     isInRangeOfControl() {
         if (!this.LowestAllowedTemperature)           
