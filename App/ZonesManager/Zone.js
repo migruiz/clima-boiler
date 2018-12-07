@@ -8,17 +8,19 @@ class Zone extends EventEmitter {
       this.zoneCode=zoneCode;
       this.modules=[];
       this.zoneCode=zoneCode;
+      this.onOffModule=new ZoneOnOffModule(this.zoneCode)
+      this.limitModule=new ZoneTemperatureLimitModule(this.zoneCode)
     }
     getOnOffModuleIsActive(){
-      return true
+      return this.onOffModule.Monitored
     }
     getLimitModuleTargetTemperature(){
-        return 22.3;
+        return this.limitModule.LowestAllowedTemperature
     }
     async initAsync(){
-      this.modules.push(new ZoneOnOffModule(this.zoneCode));
-      this.modules.push(new ZoneTemperatureLimitModule(this.zoneCode));
-      this.modules.push(new ZoneTemperatureLimitModule(this.zoneCode));
+      this.modules.push();
+      this.modules.push(this.onOffModule);
+      this.modules.push(this.limitModule);
       this.modules.push(new ZoneSmartInitialBoostModule(this.zoneCode));
       var self=this
       for (let index = 0; index < this.modules.length; index++) {

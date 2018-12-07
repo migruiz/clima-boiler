@@ -18,9 +18,11 @@ class ZoneTemperatureLimitModule extends ZoneModule {
             self.CurrentTemperature=content.temperature
             self.reportStateChange()
         });
-        mqttCluster.subscribeData("zoneLowestAllowedTemperature/"+this.zoneCode, function(content) {
-            self.LowestAllowedTemperature=content.temperature
+        mqttCluster.subscribeData("zoneLowestAllowedTemperature/"+this.zoneCode,async function(content) {
+            self.LowestAllowedTemperature=content.temperature            
             self.reportStateChange()
+            var mqttCluster=await mqtt.getClusterAsync()               
+            mqttCluster.publishData('zoneBoilerLowestAllowedTemperatureChanged',{zoneCode:this.zoneCode,targetTemperature:this.LowestAllowedTemperature});
         });
         console.log(this.zoneCode)
         console.log(this.LowestAllowedTemperature)
