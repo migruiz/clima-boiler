@@ -1,3 +1,4 @@
+var mqtt = require('../mqttCluster.js');
 const EventEmitter = require( 'events' );
 const ZoneOnOffModule=require('./ZoneOnOffModule.js');
 const ZoneTemperatureLimitModule=require('./ZoneTemperatureLimitModule.js');
@@ -11,8 +12,9 @@ class Zone extends EventEmitter {
       this.onOffModule=new ZoneOnOffModule(this.zoneCode)
       this.limitModule=new ZoneTemperatureLimitModule(this.zoneCode)
     }
-    getOnOffModuleIsActive(){
-      return this.onOffModule.Monitored
+    getZoneBoilerConfig(){
+      var zoneConfig={zoneCode:this.zoneCode, regulated:this.onOffModule.Monitored,targetTemperature:this.limitModule.LowestAllowedTemperature}
+      return zoneConfig
     }
     getLimitModuleTargetTemperature(){
         return this.limitModule.LowestAllowedTemperature
@@ -31,6 +33,16 @@ class Zone extends EventEmitter {
         })
 
       }
+      this.onOffModule.on('zoneBoilerConfigChange',async function(){
+        var zoneConfig=self.getZoneBoilerConfig()
+        var mqttCluster=await mqtt.getClusterAsync() 
+        mqttCluster.publishData("zoneBoilerChange",zoneConfig)
+      });
+      this.limitModule.on('zoneBoilerConfigChange',async function(){
+        var zoneConfig=self.getZoneBoilerConfig()
+        var mqttCluster=await mqtt.getClusterAsync() 
+        mqttCluster.publishData("zoneBoilerChange",zoneConfig)
+      })
       
     }
 

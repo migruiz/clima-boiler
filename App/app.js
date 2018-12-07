@@ -35,7 +35,7 @@ global.dbPath= 'c:\\valves.sqlite';
         var zones=global.boilerValves.upstairs.zones.concat(global.boilerValves.downstairs.zones)
         for (var key in zones) {
             var zone=zones[key]
-            var zoneConfig={zoneCode:zone.zoneCode, regulated:zone.getOnOffModuleIsActive(),targetTemperature:zone.getLimitModuleTargetTemperature()}
+            var zoneConfig=zone.getZoneBoilerConfig()
             zonesConfigList.push(zoneConfig)
         }
         var mqttCluster=await mqtt.getClusterAsync() 

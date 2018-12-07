@@ -13,11 +13,10 @@ class ZoneOnOffModule extends ZoneModule {
             this.Monitored=await sqliteRepository.getZoneAutoRegulateEnabledAsync(this.zoneCode)     
             var mqttCluster=await mqtt.getClusterAsync() 
             var self=this
-            mqttCluster.subscribeData("zoneIsMonitored/"+this.zoneCode, async function(content) {
+            mqttCluster.subscribeData("zoneIsMonitored/"+this.zoneCode, function(content) {
                 self.Monitored=content.Monitored
                 self.reportStateChange() 
-                var mqttCluster=await mqtt.getClusterAsync()               
-                mqttCluster.publishData('zoneBoilerRegulatedChanged',{zoneCode:this.zoneCode,regulated:this.Monitored});
+                self.emit( 'zoneBoilerConfigChange');
             });   
     }
     getIsActive(){
