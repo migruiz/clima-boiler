@@ -86,7 +86,6 @@ class ZoneSmartInitialBoostModule extends ZoneModule {
             return false;
         var delta=this.LowestAllowedTemperature - this.CurrentTemperature 
         var degreesToReachTarget = Math.round( delta * 1e1 ) / 1e1
-        console.log(degreesToReachTarget)
         return degreesToReachTarget>0 && degreesToReachTarget<=0.3
     }
 
