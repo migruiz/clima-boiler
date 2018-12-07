@@ -12,10 +12,10 @@ global.boilerValves={
     upstairs:new BoilerValve('upstairs'),
     downstairs:new BoilerValve('downstairs')
 }
-//global.mtqqLocalPath = "mqtt://localhost";
-global.mtqqLocalPath = process.env.MQTTLOCAL;
-//global.dbPath= 'c:\\valves.sqlite';
-global.dbPath = '/ClimaBoiler/valves.sqlite';
+global.mtqqLocalPath = "mqtt://piscos.tk";
+//global.mtqqLocalPath = process.env.MQTTLOCAL;
+global.dbPath= 'c:\\valves.sqlite';
+//global.dbPath = '/ClimaBoiler/valves.sqlite';
 (async function(){
     for (var key in global.zonesConfiguration) {
         var zoneConfig=global.zonesConfiguration[key]
@@ -30,14 +30,17 @@ global.dbPath = '/ClimaBoiler/valves.sqlite';
   })();
 
   function subscribeToEvents(mqttCluster){
-    mqttCluster.subscribeData('automaticboilercontrol/upstairs',function(content) {
-        console.log('automaticboilercontrol/upstairs')
-        console.log(content)
-    })
-    mqttCluster.subscribeData('automaticboilercontrol/downstairs',function(content) {
-        console.log('automaticboilercontrol/downstairs')
-        console.log(content)
-    })
+    mqttCluster.subscribeData("AllZonesConfigRequest",async () =>{
+        var zonesConfigList=[];
+        var zones=global.boilerValves.upstairs.zones.concat(global.boilerValves.downstairs.zones)
+        for (var key in zones) {
+            var zone=zones[key]
+            var zoneConfig={zoneCode:zone.zoneCode, regulated:zone.getOnOffModuleIsActive(),targetTemperature:zone.getLimitModuleTargetTemperature()}
+            zonesConfigList.push(zoneConfig)
+        }
+        var mqttCluster=await mqtt.getClusterAsync() 
+        mqttCluster.publishData("AllZonesConfigResponse",zonesConfigList)
+    });
   }
 
 process.on('SIGINT', function () {
