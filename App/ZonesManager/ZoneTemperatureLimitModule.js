@@ -35,7 +35,7 @@ class ZoneTemperatureLimitModule extends ZoneModule {
             return false;
         if (!this.CurrentTemperature)           
             return false;
-        return Math.round( this.CurrentTemperature * 1e1 ) / 1e1 - Math.round( this.LowestAllowedTemperature * 1e1 ) / 1e1
+        return Math.round( this.CurrentTemperature * 1e1 ) / 1e1 < Math.round( this.LowestAllowedTemperature * 1e1 ) / 1e1
     }
     getIsActive() {
         return true

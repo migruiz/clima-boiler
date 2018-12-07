@@ -20,7 +20,6 @@ class Zone extends EventEmitter {
         return this.limitModule.LowestAllowedTemperature
     }
     async initAsync(){
-      this.modules.push();
       this.modules.push(this.onOffModule);
       this.modules.push(this.limitModule);
       this.modules.push(new ZoneSmartInitialBoostModule(this.zoneCode));
