@@ -46,7 +46,7 @@ class ZoneSmartInitialBoostModule extends ZoneModule {
             this.OnBoostInterval = true;            
             this.ZoneRequestingHeat = true; 
             this.reportStateChange()
-            this.requesingtHeatInterval=setTimeout(this.onBoostOnIntervalFinished.bind(this), 1000 * 60 * 5);
+            this.requesingtHeatInterval=setTimeout(this.onBoostOnIntervalFinished.bind(this), 1000 * 60 * 1);
         }
         else{
             this.reset();
@@ -69,7 +69,7 @@ class ZoneSmartInitialBoostModule extends ZoneModule {
             self.OnBoostInterval = false;
             this.reportStateChange()
             console.log(self.zoneCode+ " coolingOffIntervalFinished")
-         }, 1000 * 60 * 5);
+         }, 1000 * 60 * 1);
     }
 
     getisCallingForHeat() {
