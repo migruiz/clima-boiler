@@ -4,8 +4,8 @@ var sqliteRepository = require('../sqliteValvesRepository.js');
 class ZoneTemperatureLimitModule extends ZoneModule {
     constructor(zoneCode) {
         super(zoneCode)
-        this.LowestAllowedTemperature;
-        this.CurrentTemperature;
+        this.LowestAllowedTemperature=0
+        this.CurrentTemperature=0
         this.OnPriority = 90;
         this.OffPriority = 20;
     }
@@ -15,12 +15,13 @@ class ZoneTemperatureLimitModule extends ZoneModule {
         var mqttCluster=await mqtt.getClusterAsync() 
         var self=this
         mqttCluster.subscribeData("zoneClimateChange/"+this.zoneCode, function(content) {
-            self.CurrentTemperature=content.temperature
+            self.CurrentTemperature=Math.round( content.temperature * 1e1 ) / 1e1
             self.reportStateChange()
         });
         mqttCluster.subscribeData("zoneLowestAllowedTemperature/"+this.zoneCode,async function(content) {
-            self.LowestAllowedTemperature=content.temperature         
-            await sqliteRepository.setZoneValveinimumTemperature(self.zoneCode,content.temperature)               
+            var roundedTemp=Math.round( content.temperature * 1e1 ) / 1e1
+            self.LowestAllowedTemperature=roundedTemp       
+            await sqliteRepository.setZoneValveinimumTemperature(self.zoneCode,roundedTemp)               
             self.reportStateChange()
             self.emit( 'zoneBoilerConfigChange');
         });
@@ -34,7 +35,7 @@ class ZoneTemperatureLimitModule extends ZoneModule {
             return false;
         if (!this.CurrentTemperature)           
             return false;
-        return this.CurrentTemperature < this.LowestAllowedTemperature;
+        return Math.round( this.CurrentTemperature * 1e1 ) / 1e1 - Math.round( this.LowestAllowedTemperature * 1e1 ) / 1e1
     }
     getIsActive() {
         return true

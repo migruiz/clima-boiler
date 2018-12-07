@@ -1,5 +1,6 @@
 var mqtt = require('../mqttCluster.js');
 const ZoneModule=require('./ZoneModule.js');
+var sqliteRepository = require('../sqliteValvesRepository.js');
 class ZoneSmartInitialBoostModule extends ZoneModule {
     constructor(zoneCode) {
         super(zoneCode)
@@ -13,28 +14,39 @@ class ZoneSmartInitialBoostModule extends ZoneModule {
         this.coolingOffInterval=null;
     }
 
-    async init() {
+    async initAsync() {
 
         this.LowestAllowedTemperature=await sqliteRepository.getZoneMinimumTemperatureAsync(this.zoneCode)
         var mqttCluster=await mqtt.getClusterAsync() 
         var self=this
-        mqttCluster.subscribeData("zoneClimateChange/"+this.zoneCode, onCurrentTemperatureChanged);
+        mqttCluster.subscribeData("zoneClimateChange/"+this.zoneCode, this.onCurrentTemperatureChanged.bind(this));
         mqttCluster.subscribeData("zoneLowestAllowedTemperature/"+this.zoneCode, function(content) {
-            self.LowestAllowedTemperature=content.temperature
+            self.LowestAllowedTemperature=Math.round( content.temperature * 1e1 ) / 1e1;
             self.reset();
+            self.checkIfZoneNeedsHeating();
             self.reportStateChange()
         });
+        mqttCluster.subscribeData("zoneIsMonitored/"+this.zoneCode,async  function() {
+            self.reset();
+            self.checkIfZoneNeedsHeating();
+            self.reportStateChange()
+        }); 
     }
 
     
     onCurrentTemperatureChanged(content){
-        if (isInRangeOfControl()){
+        this.CurrentTemperature=Math.round( content.temperature * 1e1 ) / 1e1;
+        this.checkIfZoneNeedsHeating()
+    }
+    checkIfZoneNeedsHeating(){
+        if (this.isInRangeOfControl()){
             if (this.OnBoostInterval)
                 return;   
+            console.log(this.zoneCode+ " started boost interval")
             this.OnBoostInterval = true;            
             this.ZoneRequestingHeat = true; 
             this.reportStateChange()
-            this.requesingtHeatInterval=setTimeout(this.onBoostOnIntervalFinished, 1000 * 60 * 5);
+            this.requesingtHeatInterval=setTimeout(this.onBoostOnIntervalFinished.bind(this), 1000 * 60 * 5);
         }
         else{
             this.reset();
@@ -51,7 +63,13 @@ class ZoneSmartInitialBoostModule extends ZoneModule {
     onBoostOnIntervalFinished() {
         this.ZoneRequestingHeat = false;
         this.reportStateChange()
-        coolingOffInterval=setTimeout(() => { this.OnBoostInterval = false; }, 1000 * 60 * 5);
+        console.log(this.zoneCode+ " onBoostOnIntervalFinished")
+        var self=this;
+        this.coolingOffInterval=setTimeout(() => { 
+            self.OnBoostInterval = false;
+            this.reportStateChange()
+            console.log(self.zoneCode+ " coolingOffIntervalFinished")
+         }, 1000 * 60 * 5);
     }
 
     getisCallingForHeat() {
@@ -66,8 +84,8 @@ class ZoneSmartInitialBoostModule extends ZoneModule {
             return false;
         if (!this.CurrentTemperature)           
             return false;
-        var degreesToReachTarget =this.LowestAllowedTemperature-this.CurrentTemperature;
-        return degreesToReachTarget>0 && degreesToReachTarget<0.3
+        var degreesToReachTarget =Math.round( this.LowestAllowedTemperature-this.CurrentTemperature * 1e1 ) / 1e1
+        return degreesToReachTarget>0 && degreesToReachTarget<=0.3
     }
 
 }
