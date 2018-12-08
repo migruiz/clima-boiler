@@ -3,7 +3,7 @@ const BoilerValve=require('./BoilerValve')
 global.zonesConfiguration= {
     masterroom: 'upstairs',   
     livingroom:  'downstairs',
-    playroom:  'upstairs', 
+    entrance:  'downstairs', 
     masterbathroom:  'upstairs',
     computerroom:  'upstairs',
     secondbedroom: 'upstairs'
