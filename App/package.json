@@ -7,12 +7,8 @@
     "name": "piscos"
   },
   "dependencies": {
-    "amqplib": "^0.5.1",
-    "openzwave-shared": "^1.4.0",
-    "asyncawait": "^1.0.0",
+    "mqtt": "^2.18.3",
     "sqlite3": "^3.1.13",
-    "locks": "^0.2.2",
-    "request": "^2.83.0",
-    "request-promise": "^4.2.2"
+    "a-promise-queue": "2.0.0"
   }
 }
