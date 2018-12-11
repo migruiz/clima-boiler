@@ -42,7 +42,7 @@ class ZoneSmartInitialBoostModule extends ZoneModule {
         if (this.isInRangeOfControl()){
             if (this.OnBoostInterval)
                 return;   
-            console.log(this.zoneCode+ " started boost interval")
+            //console.log(this.zoneCode+ " started boost interval")
             this.OnBoostInterval = true;            
             this.ZoneRequestingHeat = true; 
             this.reportStateChange()
@@ -63,12 +63,12 @@ class ZoneSmartInitialBoostModule extends ZoneModule {
     onBoostOnIntervalFinished() {
         this.ZoneRequestingHeat = false;
         this.reportStateChange()
-        console.log(this.zoneCode+ " onBoostOnIntervalFinished")
+        //console.log(this.zoneCode+ " onBoostOnIntervalFinished")
         var self=this;
         this.coolingOffInterval=setTimeout(() => { 
             self.OnBoostInterval = false;
             this.reportStateChange()
-            console.log(self.zoneCode+ " coolingOffIntervalFinished")
+            //console.log(self.zoneCode+ " coolingOffIntervalFinished")
          }, 1000 * 60 * 5);
     }
 

@@ -25,8 +25,8 @@ class ZoneTemperatureLimitModule extends ZoneModule {
             self.reportStateChange()
             self.emit( 'zoneBoilerConfigChange');
         });
-        console.log(this.zoneCode)
-        console.log(this.LowestAllowedTemperature)
+        //console.log(this.zoneCode)
+        //console.log(this.LowestAllowedTemperature)
     }
     
 
