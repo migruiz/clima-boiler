@@ -9,7 +9,6 @@ class Zone extends EventEmitter {
       this.zoneCode=zoneCode;
       this.modules=[];
       this.zoneCode=zoneCode;
-      this.onOffModule=new ZoneOnOffModule(this.zoneCode)
       this.limitModule=new ZoneTemperatureLimitModule(this.zoneCode)
     }
     getZoneBoilerConfig(){
@@ -20,28 +19,52 @@ class Zone extends EventEmitter {
         return this.limitModule.LowestAllowedTemperature
     }
     async initAsync(){
-      this.modules.push(this.onOffModule);
+      this.modules.push(new ZoneOnOffModule(this.zoneCode));
       this.modules.push(this.limitModule);
       this.modules.push(new ZoneSmartInitialBoostModule(this.zoneCode));
       var self=this
+
+
       for (let index = 0; index < this.modules.length; index++) {
         var module=this.modules[index];
         await module.initAsync();
         module.on('stateChanged',function(){
           self.emit('stateChanged',self);
         })
-
       }
-      this.onOffModule.on('zoneBoilerConfigChange',async function(){
+
+      mqttCluster.subscribeData("zoneIsMonitored/"+this.zoneCode,async function(content) {
+        for (let index = 0; index < this.modules.length; index++) {
+          var module=this.modules[index];
+          if (module.reportZoneIsMonitoredEventAsync){
+           await module.reportZoneIsMonitoredEventAsync(content)
+          }
+        }
         var zoneConfig=self.getZoneBoilerConfig()
-        var mqttCluster=await mqtt.getClusterAsync() 
         mqttCluster.publishData("zoneBoilerChange",zoneConfig)
+        self.emit('stateChanged',self);
+      }); 
+
+      mqttCluster.subscribeData("zoneClimateChange/"+this.zoneCode,function(content) {
+        for (let index = 0; index < this.modules.length; index++) {
+          var module=this.modules[index];
+          if (module.reportZoneClimateChangedEvent){
+            module.reportZoneClimateChangedEvent(content)
+          }
+        }
+        self.emit('stateChanged',self);
+      }); 
+      mqttCluster.subscribeData("zoneLowestAllowedTemperature/"+this.zoneCode,async function(content) {
+        for (let index = 0; index < this.modules.length; index++) {
+          var module=this.modules[index];
+          if (module.reportZoneLowestAllowedTemperatureEventAsync){
+           await module.reportZoneLowestAllowedTemperatureEventAsync(content)
+          }
+        }
+        var zoneConfig=self.getZoneBoilerConfig()
+        mqttCluster.publishData("zoneBoilerChange",zoneConfig)
+        self.emit('stateChanged',self);
       });
-      this.limitModule.on('zoneBoilerConfigChange',async function(){
-        var zoneConfig=self.getZoneBoilerConfig()
-        var mqttCluster=await mqtt.getClusterAsync() 
-        mqttCluster.publishData("zoneBoilerChange",zoneConfig)
-      })
       
     }
 

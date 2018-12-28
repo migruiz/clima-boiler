@@ -12,23 +12,16 @@ class ZoneTemperatureLimitModule extends ZoneModule {
 
     async initAsync() {
         this.LowestAllowedTemperature=await sqliteRepository.getZoneMinimumTemperatureAsync(this.zoneCode)
-        var mqttCluster=await mqtt.getClusterAsync() 
-        var self=this
-        mqttCluster.subscribeData("zoneClimateChange/"+this.zoneCode, function(content) {
-            self.CurrentTemperature=Math.round( content.temperature * 1e1 ) / 1e1
-            self.reportStateChange()
-        });
-        mqttCluster.subscribeData("zoneLowestAllowedTemperature/"+this.zoneCode,async function(content) {
-            var roundedTemp=Math.round( content.temperature * 1e1 ) / 1e1
-            self.LowestAllowedTemperature=roundedTemp       
-            await sqliteRepository.setZoneValveinimumTemperature(self.zoneCode,roundedTemp)               
-            self.reportStateChange()
-            self.emit( 'zoneBoilerConfigChange');
-        });
-        //console.log(this.zoneCode)
-        //console.log(this.LowestAllowedTemperature)
     }
     
+    reportZoneClimateChangedEvent(content){
+        this.CurrentTemperature=Math.round( content.temperature * 1e1 ) / 1e1
+    }
+    async reportZoneLowestAllowedTemperatureEventAsync(content){
+        var roundedTemp=Math.round( content.temperature * 1e1 ) / 1e1
+        this.LowestAllowedTemperature=roundedTemp       
+        await sqliteRepository.setZoneValveinimumTemperature(this.zoneCode,roundedTemp)           
+    }
 
     getisCallingForHeat() {
         if (!this.LowestAllowedTemperature)           

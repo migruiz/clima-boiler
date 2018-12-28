@@ -17,27 +17,26 @@ class ZoneSmartInitialBoostModule extends ZoneModule {
     async initAsync() {
 
         this.LowestAllowedTemperature=await sqliteRepository.getZoneMinimumTemperatureAsync(this.zoneCode)
-        var mqttCluster=await mqtt.getClusterAsync() 
-        var self=this
-        mqttCluster.subscribeData("zoneClimateChange/"+this.zoneCode, this.onCurrentTemperatureChanged.bind(this));
-        mqttCluster.subscribeData("zoneLowestAllowedTemperature/"+this.zoneCode, function(content) {
-            self.LowestAllowedTemperature=Math.round( content.temperature * 1e1 ) / 1e1;
-            self.reset();
-            self.checkIfZoneNeedsHeating();
-            self.reportStateChange()
-        });
-        mqttCluster.subscribeData("zoneIsMonitored/"+this.zoneCode,async  function() {
-            self.reset();
-            self.checkIfZoneNeedsHeating();
-            self.reportStateChange()
-        }); 
     }
 
     
-    onCurrentTemperatureChanged(content){
+    reportZoneClimateChangedEvent(content){
         this.CurrentTemperature=Math.round( content.temperature * 1e1 ) / 1e1;
         this.checkIfZoneNeedsHeating()
     }
+
+    async reportZoneLowestAllowedTemperatureEventAsync(content){
+        this.LowestAllowedTemperature=Math.round( content.temperature * 1e1 ) / 1e1;
+        this.reset();
+        this.checkIfZoneNeedsHeating();   
+    }
+
+    async reportZoneIsMonitoredEventAsync(content){
+        this.reset();
+        this.checkIfZoneNeedsHeating();
+    }
+
+
     checkIfZoneNeedsHeating(){
         if (this.isInRangeOfControl()){
             if (this.OnBoostInterval)
@@ -45,12 +44,10 @@ class ZoneSmartInitialBoostModule extends ZoneModule {
             //console.log(this.zoneCode+ " started boost interval")
             this.OnBoostInterval = true;            
             this.ZoneRequestingHeat = true; 
-            this.reportStateChange()
             this.requesingtHeatInterval=setTimeout(this.onBoostOnIntervalFinished.bind(this), 1000 * 60 * 5);
         }
         else{
             this.reset();
-            this.reportStateChange()
         }
     }
     reset(){
