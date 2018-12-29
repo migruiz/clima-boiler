@@ -14,7 +14,7 @@ class ZoneOnOffModule extends ZoneModule {
     }
 
     async reportZoneIsMonitoredEventAsync(content){
-        self.Monitored=content.Monitored
+        this.Monitored=content.Monitored
         await sqliteRepository.setZoneValveAutoRegulatedEnabled(this.zoneCode,content.Monitored)
     }
 

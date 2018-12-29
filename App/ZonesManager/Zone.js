@@ -9,6 +9,7 @@ class Zone extends EventEmitter {
       this.zoneCode=zoneCode;
       this.modules=[];
       this.zoneCode=zoneCode;
+      this.onOffModule=new ZoneOnOffModule(this.zoneCode);
       this.limitModule=new ZoneTemperatureLimitModule(this.zoneCode)
     }
     getZoneBoilerConfig(){
@@ -19,7 +20,7 @@ class Zone extends EventEmitter {
         return this.limitModule.LowestAllowedTemperature
     }
     async initAsync(){
-      this.modules.push(new ZoneOnOffModule(this.zoneCode));
+      this.modules.push(this.onOffModule);
       this.modules.push(this.limitModule);
       this.modules.push(new ZoneSmartInitialBoostModule(this.zoneCode));
       var self=this
@@ -33,9 +34,10 @@ class Zone extends EventEmitter {
         })
       }
 
+      var mqttCluster=await mqtt.getClusterAsync() 
       mqttCluster.subscribeData("zoneIsMonitored/"+this.zoneCode,async function(content) {
-        for (let index = 0; index < this.modules.length; index++) {
-          var module=this.modules[index];
+        for (let index = 0; index < self.modules.length; index++) {
+          var module=self.modules[index];
           if (module.reportZoneIsMonitoredEventAsync){
            await module.reportZoneIsMonitoredEventAsync(content)
           }
@@ -46,8 +48,8 @@ class Zone extends EventEmitter {
       }); 
 
       mqttCluster.subscribeData("zoneClimateChange/"+this.zoneCode,function(content) {
-        for (let index = 0; index < this.modules.length; index++) {
-          var module=this.modules[index];
+        for (let index = 0; index < self.modules.length; index++) {
+          var module=self.modules[index];
           if (module.reportZoneClimateChangedEvent){
             module.reportZoneClimateChangedEvent(content)
           }
@@ -55,8 +57,8 @@ class Zone extends EventEmitter {
         self.emit('stateChanged',self);
       }); 
       mqttCluster.subscribeData("zoneLowestAllowedTemperature/"+this.zoneCode,async function(content) {
-        for (let index = 0; index < this.modules.length; index++) {
-          var module=this.modules[index];
+        for (let index = 0; index < self.modules.length; index++) {
+          var module=self.modules[index];
           if (module.reportZoneLowestAllowedTemperatureEventAsync){
            await module.reportZoneLowestAllowedTemperatureEventAsync(content)
           }
