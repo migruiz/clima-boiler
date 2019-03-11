@@ -17,7 +17,7 @@ class BoilerValve{
             zone.on('stateChanged',async function(reportingzone){
                 var shouldBeOn=self.getValveNeededState();
                 var mqttCluster=await mqtt.getClusterAsync() 
-                console.log(reportingzone.zoneCode+" " +self.boilerValve + " " + shouldBeOn.toString())
+                //console.log(reportingzone.zoneCode+" " +self.boilerValve + " " + shouldBeOn.toString())
                 mqttCluster.publishData('automaticboilercontrol/'+self.boilerValve,shouldBeOn)
               })
           }
